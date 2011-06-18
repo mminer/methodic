@@ -31,14 +31,29 @@ public class Methodic : EditorWindow
 	/// </summary>
 	public static readonly System.Version version = new System.Version(0, 1);
 	
+	/// <summary>
+	/// The website to visit for information.
+	/// </summary>
+	public const string website = "http://www.matthewminer.com/";
+	
+	enum Panel { Main, Options }
+	
+	static readonly GUIContent optionsLabel = new GUIContent("Options", "Customize which methods are shown.");
+	static readonly GUIContent websiteLabel = new GUIContent("Website", "Instructions and contact information.");
 	static readonly GUIContent popupLabel = new GUIContent("Method");
 	static readonly GUIContent invokeLabel = new GUIContent("Invoke", "Execute this method.");
+	static readonly GUIContent showStaticLabel = new GUIContent("Show Static", "Show methods beyond those belonging to the instance.");
+	static readonly GUIContent showPrivateLabel = new GUIContent("Show Private", "Show methods unavailable outside the class.");
+	static readonly GUIContent displayClassLabel = new GUIContent("Display Class", "Show the class name beside the method name.");
 	
 	static GameObject target;
 	static Method[] methods = {};
 	static GUIContent[] methodLabels = {};
-	static int selected;
+	static int selectedMethod;
+	static Panel selectedPanel;
 	static Vector2 scrollPos;
+	
+	
 	
 	/// <summary>
 	/// Adds Methodic to Window menu.
@@ -52,30 +67,75 @@ public class Methodic : EditorWindow
 	
 	void OnGUI ()
 	{
-		scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
+		EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
 		
-		if (methods.Length == 0) {
-			GUI.enabled = false;
-		}
+			GUILayout.FlexibleSpace();	
+			
+			var optionsToggle = GUILayout.Toggle(selectedPanel == Panel.Options, optionsLabel, EditorStyles.toolbarButton);
+			
+			if (optionsToggle) {
+				selectedPanel = Panel.Options;
+			} else {
+				selectedPanel = Panel.Main;
+			}
 		
-		EditorGUILayout.BeginHorizontal();
-			
-			selected = EditorGUILayout.Popup(popupLabel, selected, methodLabels);
-			
-			if (GUILayout.Button(invokeLabel, EditorStyles.miniButton, GUILayout.ExpandWidth(false))) {
-				var selectedMethod = methods[selected];
-			
-				if (selectedMethod.hasParameters) {
-					MethodicParametersPopup.ShowPopup(selectedMethod);
-				} else {
-					InvokeMethod(selectedMethod, null);
-				}
+			if (GUILayout.Button(websiteLabel, EditorStyles.toolbarButton)) {
+				Application.OpenURL(website);
 			}
 		
 		EditorGUILayout.EndHorizontal();
 		
-		GUI.enabled = true;
-		MethodicPrefs.OnGUI();
+		scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
+		switch (selectedPanel) {
+			case Panel.Main:
+				if (methods.Length == 0) {
+					GUI.enabled = false;
+				}
+				
+				EditorGUILayout.BeginHorizontal();
+					
+					selectedMethod = EditorGUILayout.Popup(popupLabel, selectedMethod, methodLabels);
+					
+					if (GUILayout.Button(invokeLabel, EditorStyles.miniButton, GUILayout.ExpandWidth(false))) {
+						var method = methods[selectedMethod];
+					
+						if (method.hasParameters) {
+							MethodicParametersPopup.ShowPopup(method);
+						} else {
+							InvokeMethod(method, null);
+						}
+					}
+				
+				EditorGUILayout.EndHorizontal();
+				
+				GUI.enabled = true;
+				break;
+			case Panel.Options:
+				if (!MethodicOptions.loaded) {
+					MethodicOptions.Load();
+				}
+				
+				MethodicOptions.showStatic = EditorGUILayout.Toggle(showStaticLabel, MethodicOptions.showStatic);
+				MethodicOptions.showPrivate = EditorGUILayout.Toggle(showPrivateLabel, MethodicOptions.showPrivate);
+				MethodicOptions.displayClass = EditorGUILayout.Toggle(displayClassLabel, MethodicOptions.displayClass);
+				
+				EditorGUILayout.BeginHorizontal();
+					
+					GUILayout.FlexibleSpace();
+			
+					if (GUILayout.Button("Cancel")) {
+						MethodicOptions.Load();
+						selectedPanel = Panel.Main;
+					}
+					
+					if (GUILayout.Button("Save")) {
+						MethodicOptions.Save();
+						selectedPanel = Panel.Main;
+					}
+				
+				EditorGUILayout.EndHorizontal();
+				break;
+		}
 		EditorGUILayout.EndScrollView();
 	}
 	
@@ -90,7 +150,7 @@ public class Methodic : EditorWindow
 	public static void DiscoverMethods ()
 	{
 		target = Selection.activeGameObject;
-		selected = 0;
+		selectedMethod = 0;
 		var _methods = new List<Method>();
 		var _methodLabels = new List<GUIContent>();
 		
@@ -98,12 +158,12 @@ public class Methodic : EditorWindow
 			// Discover methods in attached components
 			foreach (var component in target.GetComponents<MonoBehaviour>()) {
 				var type = component.GetType();
-				var allMethods = type.GetMethods(MethodicPrefs.flags);
+				var allMethods = type.GetMethods(MethodicOptions.flags);
 				
 				foreach (var method in allMethods) {
 					var label = new GUIContent("", method.ToString());
 					
-					if (MethodicPrefs.displayClass) {
+					if (MethodicOptions.displayClass) {
 						label.text = component.GetType() + ": ";
 					}
 					
