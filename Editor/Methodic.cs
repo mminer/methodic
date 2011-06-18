@@ -2,10 +2,12 @@
 
 using UnityEditor;
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 
+/// <summary>
+/// Displays a dropdown menu of functions available for the selected game object to access.
+/// </summary>
 public class Methodic : EditorWindow
 {
 	struct Method
@@ -49,23 +51,25 @@ public class Methodic : EditorWindow
 			}
 		}
 		
-		if (methods.Count > 0) {
-			EditorGUILayout.BeginHorizontal();
-				
-				var methodNames = new string[methods.Count];
-				
-				for (int i = 0; i < methods.Count; i++) {
-					methodNames[i] = methods[i].method.Name;
-				}
-			
-				selected = EditorGUILayout.Popup("Method", selected, methodNames);
-				
-				if (GUILayout.Button("Invoke", EditorStyles.miniButton, GUILayout.ExpandWidth(false))) {
-					methods[selected].method.Invoke(methods[selected].component, null); // null = parameters
-				}
-			
-			EditorGUILayout.EndHorizontal();
+		if (methods.Count == 0) {
+			GUI.enabled = false;
 		}
+
+		EditorGUILayout.BeginHorizontal();
+			
+			var methodNames = new string[methods.Count];
+			
+			for (int i = 0; i < methods.Count; i++) {
+				methodNames[i] = methods[i].method.Name;
+			}
+		
+			selected = EditorGUILayout.Popup("Method", selected, methodNames);
+			
+			if (GUILayout.Button("Invoke", EditorStyles.miniButton, GUILayout.ExpandWidth(false))) {
+				methods[selected].method.Invoke(methods[selected].component, null); // null = parameters
+			}
+		
+		EditorGUILayout.EndHorizontal();
 	}
 	
 	/// <summary>
