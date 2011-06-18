@@ -16,12 +16,13 @@ public class Methodic : EditorWindow
 		public MethodInfo method;
 	}
 	
+	static BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
 	static GUIContent popupLabel = new GUIContent("Method");
 	static GUIContent invokeLabel = new GUIContent("Invoke", "Execute this method.");
 	
 	GameObject target;
-	List<Method> methods = new List<Method>();
-	List<GUIContent> methodLabels = new List<GUIContent>();
+	Method[] methods = {};
+	GUIContent[] methodLabels = {};
 	int selected;
 	
 	/// <summary>
@@ -36,13 +37,13 @@ public class Methodic : EditorWindow
 	
 	void OnGUI ()
 	{
-		if (methods.Count == 0) {
+		if (methods.Length == 0) {
 			GUI.enabled = false;
 		}
 		
 		EditorGUILayout.BeginHorizontal();
 			
-			selected = EditorGUILayout.Popup(popupLabel, selected, methodLabels.ToArray());
+			selected = EditorGUILayout.Popup(popupLabel, selected, methodLabels);
 			
 			if (GUILayout.Button(invokeLabel, EditorStyles.miniButton, GUILayout.ExpandWidth(false))) {
 				methods[selected].method.Invoke(methods[selected].component, null); // null = parameters
@@ -57,29 +58,25 @@ public class Methodic : EditorWindow
 	void OnSelectionChange ()
 	{
 		target = Selection.activeGameObject;
-		methods = new List<Method>();
-		methodLabels = new List<GUIContent>();
 		selected = 0;
+		var methods = new List<Method>();
+		var methodLabels = new List<GUIContent>();
 		
 		if (target != null) {
 			// Discover methods in attached components
 			foreach (var component in target.GetComponents<MonoBehaviour>()) {
 				var type = component.GetType();
-				var publicMethods = type.GetMethods(BindingFlags.Public|BindingFlags.Instance|BindingFlags.DeclaredOnly);
-				var privateMethods = type.GetMethods(BindingFlags.NonPublic|BindingFlags.Instance|BindingFlags.DeclaredOnly);
+				var allMethods = type.GetMethods(flags);
 				
-				foreach (var method in publicMethods) {
-					methods.Add(new Method { component = component, method = method });
-					methodLabels.Add(new GUIContent(method.Name, method.ToString()));
-				}
-				
-				foreach (var method in privateMethods) {
+				foreach (var method in allMethods) {
 					methods.Add(new Method { component = component, method = method });
 					methodLabels.Add(new GUIContent(method.Name, method.ToString()));
 				}
 			}
 		}
 		
+		this.methods = methods.ToArray();
+		this.methodLabels = methodLabels.ToArray();
 		Repaint();
 	}
 }
