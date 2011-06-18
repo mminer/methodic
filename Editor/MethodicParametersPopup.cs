@@ -42,7 +42,6 @@ public class MethodicParametersPopup : EditorWindow
 			
 			if (type.IsValueType) {
 				parameters[i] = System.Activator.CreateInstance(type);
-				Debug.Log("Creating value for " + type + "; " + parameters[i]);
 			} else if (type == typeof(string)) {
 				parameters[i] = "";
 			} else if (type == typeof(AnimationCurve)) {

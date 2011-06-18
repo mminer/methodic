@@ -126,11 +126,16 @@ public class Methodic : EditorWindow
 	/// <param name="parameters">The parameters to send the method.</param>
 	public static void InvokeMethod (Method toInvoke, object[] parameters)
 	{
-		var result = toInvoke.method.Invoke(toInvoke.component, parameters);
+		try {
+			var result = toInvoke.method.Invoke(toInvoke.component, parameters);
 
-		// Display the return value if one is expected
-		if (toInvoke.method.ReturnType != typeof(void)) {
-			Debug.Log("[Methodic] Result: " + result);
+			// Display the return value if one is expected
+			if (toInvoke.method.ReturnType != typeof(void)) {
+				Debug.Log("[Methodic] Result: " + result);
+			}
+		} catch (System.ArgumentException e) {
+			Debug.LogError("[Methodic] Unable to invoke method: " + e.Message);
 		}
+		
 	}
 }
