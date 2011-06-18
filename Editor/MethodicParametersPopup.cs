@@ -12,6 +12,7 @@ public class MethodicParametersPopup : EditorWindow
 	Methodic.Method method;
 	ParameterInfo[] paramInfo;
 	object[] parameters;
+	Vector2 scrollPos;
 	
 	/// <summary>
 	/// Shows the parameters popup window.
@@ -52,6 +53,7 @@ public class MethodicParametersPopup : EditorWindow
 	
 	void OnGUI ()
 	{
+		scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.ExpandHeight(true));
 		// Display an appropriate input field for each parameter
 		for (int i = 0; i < parameters.Length; i++) {
 			var info = paramInfo[i];
@@ -100,8 +102,7 @@ public class MethodicParametersPopup : EditorWindow
 				EditorGUILayout.LabelField(info.Name, label.tooltip + " parameter type unsupported (sends null)");
 			}
 		}
-		
-		GUILayout.FlexibleSpace();
+		EditorGUILayout.EndScrollView();
 		
 		EditorGUILayout.BeginHorizontal();
 			
