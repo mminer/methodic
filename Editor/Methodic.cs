@@ -16,14 +16,13 @@ public class Methodic : EditorWindow
 		public MethodInfo method;
 	}
 	
-	static BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
-	static GUIContent popupLabel = new GUIContent("Method");
-	static GUIContent invokeLabel = new GUIContent("Invoke", "Execute this method.");
+	static readonly GUIContent popupLabel = new GUIContent("Method");
+	static readonly GUIContent invokeLabel = new GUIContent("Invoke", "Execute this method.");
 	
-	GameObject target;
-	Method[] methods = {};
-	GUIContent[] methodLabels = {};
-	int selected;
+	static GameObject target;
+	static Method[] methods = {};
+	static GUIContent[] methodLabels = {};
+	static int selected;
 	
 	/// <summary>
 	/// Adds Methodic to Window menu.
@@ -32,7 +31,7 @@ public class Methodic : EditorWindow
 	static void Init ()
 	{
 		// Get existing open window, or make new one if none
-		EditorWindow.GetWindow<Methodic>().Show();
+		EditorWindow.GetWindow<Methodic>();
 	}
 	
 	void OnGUI ()
@@ -50,34 +49,43 @@ public class Methodic : EditorWindow
 			}
 		
 		EditorGUILayout.EndHorizontal();
+		
+		EditorGUILayout.Space();
+		GUI.enabled = true;
+		MethodicPrefs.OnGUI();
+	}
+	
+	void OnSelectionChange ()
+	{
+		DiscoverMethods();
 	}
 	
 	/// <summary>
 	/// Discovers the selected game object's methods and refreshes the GUI.
 	/// </summary>
-	void OnSelectionChange ()
+	public static void DiscoverMethods ()
 	{
 		target = Selection.activeGameObject;
 		selected = 0;
-		var methods = new List<Method>();
-		var methodLabels = new List<GUIContent>();
+		var _methods = new List<Method>();
+		var _methodLabels = new List<GUIContent>();
 		
 		if (target != null) {
 			// Discover methods in attached components
 			foreach (var component in target.GetComponents<MonoBehaviour>()) {
 				var type = component.GetType();
-				var allMethods = type.GetMethods(flags);
+				var allMethods = type.GetMethods(MethodicPrefs.flags);
 				
 				foreach (var method in allMethods) {
-					methods.Add(new Method { component = component, method = method });
-					methodLabels.Add(new GUIContent(method.Name, method.ToString()));
+					_methods.Add(new Method { component = component, method = method });
+					_methodLabels.Add(new GUIContent(method.Name, method.ToString()));
 				}
 			}
 		}
 		
-		this.methods = methods.ToArray();
-		this.methodLabels = methodLabels.ToArray();
-		Repaint();
+		methods = _methods.ToArray();
+		methodLabels = _methodLabels.ToArray();
+		EditorWindow.GetWindow<Methodic>().Repaint();
 	}
 	
 	/// <summary>
@@ -87,7 +95,7 @@ public class Methodic : EditorWindow
 	static void InvokeMethod (Method toInvoke)
 	{
 		var result = toInvoke.method.Invoke(toInvoke.component, null); // null = parameters
-		
+
 		// Display the return value if one is expected
 		if (toInvoke.method.ReturnType != typeof(void)) {
 			Debug.Log("[Methodic] Result: " + result);
