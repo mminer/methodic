@@ -50,7 +50,6 @@ public class Methodic : EditorWindow
 		
 		EditorGUILayout.EndHorizontal();
 		
-		EditorGUILayout.Space();
 		GUI.enabled = true;
 		MethodicPrefs.OnGUI();
 	}
@@ -94,6 +93,12 @@ public class Methodic : EditorWindow
 	/// <param name="toInvoke">The method to execute.</param>
 	static void InvokeMethod (Method toInvoke)
 	{
+		var parameters = toInvoke.method.GetParameters();
+		
+		foreach (var param in parameters) {
+			Debug.Log(param);
+		}
+		
 		var result = toInvoke.method.Invoke(toInvoke.component, null); // null = parameters
 
 		// Display the return value if one is expected

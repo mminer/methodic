@@ -1,7 +1,12 @@
+// Copyright (c) 2011 Matthew Miner
+
 using UnityEditor;
 using UnityEngine;
 using System.Reflection;
 
+/// <summary>
+/// Options for controlling which methods are shown / available for execution.
+/// </summary>
 public static class MethodicPrefs
 {
 	const string showStaticKey = "methodic_show_static";
@@ -26,7 +31,7 @@ public static class MethodicPrefs
 			}
 			
 			var _flags = constantFlags;
-			if (showStatic) {  _flags |= BindingFlags.Static; }
+			if (showStatic) { _flags |= BindingFlags.Static; }
 			if (showPrivate) { _flags |= BindingFlags.NonPublic; }
 			return _flags;
 		}
@@ -41,16 +46,19 @@ public static class MethodicPrefs
 		showOptions = EditorGUILayout.Foldout(showOptions, optionsLabel);
 		
 		if (showOptions) {
+			// Ignore changes to previous GUI elements
+			GUI.changed = false;
+			
 			EditorGUI.indentLevel = 2;
 			showStatic = EditorGUILayout.Toggle(showStaticLabel, showStatic);
 			showPrivate = EditorGUILayout.Toggle(showPrivateLabel, showPrivate);
 			EditorGUI.indentLevel = 0;
-		}
-		
-		// Resave and reload the methods shown if options are changed
-		if (GUI.changed) {
-			SavePrefs();
-			Methodic.DiscoverMethods();
+			
+			// Resave and reload the methods shown if options are changed
+			if (GUI.changed) {
+				SavePrefs();
+				Methodic.DiscoverMethods();
+			}
 		}
 	}
 	
