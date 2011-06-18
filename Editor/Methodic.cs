@@ -10,16 +10,25 @@ using System.Reflection;
 /// </summary>
 public class Methodic : EditorWindow
 {
+	/// <summary>
+	/// A simple struct for holding method info and its parent component.
+	/// </summary>
 	public struct Method
 	{
 		public Component component;
 		public MethodInfo method;
 		
+		/// <summary>
+		/// Whether the method accepts any parameters.
+		/// </summary>
 		public bool hasParameters {
 			get { return method.GetParameters().Length > 0; }
 		}
 	}
 	
+	/// <summary>
+	/// The version of Methodic.
+	/// </summary>
 	public static readonly System.Version version = new System.Version(1, 0);
 	
 	static readonly GUIContent popupLabel = new GUIContent("Method");

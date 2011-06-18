@@ -20,6 +20,7 @@ public class MethodicParametersPopup : EditorWindow
 	public static void ShowPopup (Methodic.Method method)
 	{
 		var window = CreateInstance<MethodicParametersPopup>();
+		window.title = "Parameters";
 		window.Init(method);
 		window.ShowUtility();
 	}
@@ -54,41 +55,49 @@ public class MethodicParametersPopup : EditorWindow
 		// Display an appropriate input field for each parameter
 		for (int i = 0; i < parameters.Length; i++) {
 			var info = paramInfo[i];
+			var label = new GUIContent(info.Name, info.ParameterType.Name);
 			
 			// Primitives
 			if (info.ParameterType == typeof(int)) {
-				parameters[i] = EditorGUILayout.IntField(info.Name, (int)parameters[i]);
+				parameters[i] = EditorGUILayout.IntField(label, (int)parameters[i]);
 			} else if (info.ParameterType == typeof(float)) {
-				parameters[i] = EditorGUILayout.FloatField(info.Name, (float)parameters[i]);
+				parameters[i] = EditorGUILayout.FloatField(label, (float)parameters[i]);
 			} else if (info.ParameterType == typeof(string)) {
-				parameters[i] = EditorGUILayout.TextField(info.Name, (string)parameters[i]);
+				parameters[i] = EditorGUILayout.TextField(label, (string)parameters[i]);
 			}
 			// Unity objects / structs
 			else if (info.ParameterType == typeof(Color)) {
-				parameters[i] = EditorGUILayout.ColorField(info.Name, (Color)parameters[i]);
+				parameters[i] = EditorGUILayout.ColorField(label, (Color)parameters[i]);
 			} else if (info.ParameterType == typeof(AnimationCurve)) {
-				parameters[i] = EditorGUILayout.CurveField(info.Name, (AnimationCurve)parameters[i]);
+				parameters[i] = EditorGUILayout.CurveField(label, (AnimationCurve)parameters[i]);
 			} else if (info.ParameterType == typeof(Rect)) {
-				parameters[i] = EditorGUILayout.RectField(info.Name, (Rect)parameters[i]);
+				parameters[i] = EditorGUILayout.RectField(label, (Rect)parameters[i]);
 			} else if (info.ParameterType == typeof(Vector2)) {
 				parameters[i] = EditorGUILayout.Vector2Field(info.Name, (Vector2)parameters[i]);
 			} else if (info.ParameterType == typeof(Vector3)) {
 				parameters[i] = EditorGUILayout.Vector3Field(info.Name, (Vector3)parameters[i]);
 			} else if (info.ParameterType == typeof(Vector4)) {
 				parameters[i] = EditorGUILayout.Vector4Field(info.Name, (Vector4)parameters[i]);
-			} else if (info.ParameterType.IsEnum) {				
+			} else if (info.ParameterType.IsEnum) {
+				// Place the enum names into GUIContent labels
 				var enumNames = System.Enum.GetNames(info.ParameterType);
+				var names = new GUIContent[enumNames.Length];
+				
+				for (int j = 0; j < names.Length; j++) {
+					names[j] = new GUIContent(enumNames[j]);
+				}
+				
 				var enumValues = System.Enum.GetValues(info.ParameterType);
-				var selected = EditorGUILayout.Popup(info.Name, (int)parameters[i], enumNames);
+				var selected = EditorGUILayout.Popup(label, (int)parameters[i], names);
 				parameters[i] = enumValues.GetValue(selected);
 			} else if (typeof(Object).IsAssignableFrom(info.ParameterType)) { // Transform, GameObject, etc.
-				parameters[i] = EditorGUILayout.ObjectField(info.Name, (Object)parameters[i], info.ParameterType);
+				parameters[i] = EditorGUILayout.ObjectField(label, (Object)parameters[i], info.ParameterType);
 			}
 			// Unknown / unsupported
 			else if (info.ParameterType.IsArray) {
 				EditorGUILayout.LabelField(info.Name, "Array parameter type unsupported (sends null)");
 			} else {
-				EditorGUILayout.LabelField(info.Name, "Unsupported parameter type (sends null)");
+				EditorGUILayout.LabelField(info.Name, label.tooltip + " parameter type unsupported (sends null)");
 			}
 		}
 		
