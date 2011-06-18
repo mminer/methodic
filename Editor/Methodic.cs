@@ -16,9 +16,12 @@ public class Methodic : EditorWindow
 		public MethodInfo method;
 	}
 	
+	static GUIContent popupLabel = new GUIContent("Method");
+	static GUIContent invokeLabel = new GUIContent("Invoke", "Execute this method.");
+	
 	GameObject target;
 	List<Method> methods = new List<Method>();
-	List<string> methodNames = new List<string>();
+	List<GUIContent> methodLabels = new List<GUIContent>();
 	int selected;
 	
 	/// <summary>
@@ -39,9 +42,9 @@ public class Methodic : EditorWindow
 		
 		EditorGUILayout.BeginHorizontal();
 			
-			selected = EditorGUILayout.Popup("Method", selected, methodNames.ToArray());
+			selected = EditorGUILayout.Popup(popupLabel, selected, methodLabels.ToArray());
 			
-			if (GUILayout.Button("Invoke", EditorStyles.miniButton, GUILayout.ExpandWidth(false))) {
+			if (GUILayout.Button(invokeLabel, EditorStyles.miniButton, GUILayout.ExpandWidth(false))) {
 				methods[selected].method.Invoke(methods[selected].component, null); // null = parameters
 			}
 		
@@ -55,10 +58,11 @@ public class Methodic : EditorWindow
 	{
 		target = Selection.activeGameObject;
 		methods = new List<Method>();
-		methodNames = new List<string>();
+		methodLabels = new List<GUIContent>();
 		selected = 0;
 		
 		if (target != null) {
+			// Discover methods in attached components
 			foreach (var component in target.GetComponents<MonoBehaviour>()) {
 				var type = component.GetType();
 				var publicMethods = type.GetMethods(BindingFlags.Public|BindingFlags.Instance|BindingFlags.DeclaredOnly);
@@ -66,12 +70,12 @@ public class Methodic : EditorWindow
 				
 				foreach (var method in publicMethods) {
 					methods.Add(new Method { component = component, method = method });
-					methodNames.Add(method.Name);
+					methodLabels.Add(new GUIContent(method.Name, method.ToString()));
 				}
 				
 				foreach (var method in privateMethods) {
 					methods.Add(new Method { component = component, method = method });
-					methodNames.Add(method.Name);
+					methodLabels.Add(new GUIContent(method.Name, method.ToString()));
 				}
 			}
 		}
