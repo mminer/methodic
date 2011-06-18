@@ -46,14 +46,19 @@ public class Methodic : EditorWindow
 			selected = EditorGUILayout.Popup(popupLabel, selected, methodLabels);
 			
 			if (GUILayout.Button(invokeLabel, EditorStyles.miniButton, GUILayout.ExpandWidth(false))) {
-				methods[selected].method.Invoke(methods[selected].component, null); // null = parameters
+				var toInvoke = methods[selected];
+				var result = toInvoke.method.Invoke(toInvoke.component, null); // null = parameters
+				
+				if (toInvoke.method.ReturnType != typeof(void)) {
+					Debug.Log("[Methodic] Result: " + result);
+				}
 			}
 		
 		EditorGUILayout.EndHorizontal();
 	}
 	
 	/// <summary>
-	/// Refreshes the GUI when a new game object is selected.
+	/// Discovers the selected game object's methods and refreshes the GUI.
 	/// </summary>
 	void OnSelectionChange ()
 	{
