@@ -29,7 +29,7 @@ public class Methodic : EditorWindow
 	/// <summary>
 	/// The version of Methodic.
 	/// </summary>
-	public static readonly System.Version version = new System.Version(1, 0);
+	public static readonly System.Version version = new System.Version(0, 1);
 	
 	static readonly GUIContent popupLabel = new GUIContent("Method");
 	static readonly GUIContent invokeLabel = new GUIContent("Invoke", "Execute this method.");
