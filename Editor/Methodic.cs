@@ -1,4 +1,4 @@
-// Copyright (c) 2011 Matthew Miner
+// Copyright (c) 2011 Matthew Miner.
 
 using UnityEditor;
 using UnityEngine;
@@ -10,10 +10,14 @@ using System.Reflection;
 /// </summary>
 public class Methodic : EditorWindow
 {
-	struct Method
+	public struct Method
 	{
 		public Component component;
 		public MethodInfo method;
+		
+		public bool hasParameters {
+			get { return method.GetParameters().Length > 0; }
+		}
 	}
 	
 	static readonly GUIContent popupLabel = new GUIContent("Method");
@@ -31,7 +35,7 @@ public class Methodic : EditorWindow
 	static void Init ()
 	{
 		// Get existing open window, or make new one if none
-		EditorWindow.GetWindow<Methodic>();
+		GetWindow<Methodic>();
 	}
 	
 	void OnGUI ()
@@ -45,7 +49,13 @@ public class Methodic : EditorWindow
 			selected = EditorGUILayout.Popup(popupLabel, selected, methodLabels);
 			
 			if (GUILayout.Button(invokeLabel, EditorStyles.miniButton, GUILayout.ExpandWidth(false))) {
-				InvokeMethod(methods[selected]);
+				var selectedMethod = methods[selected];
+			
+				if (selectedMethod.hasParameters) {
+					MethodicParametersPopup.ShowPopup(selectedMethod);
+				} else {
+					InvokeMethod(selectedMethod, null);
+				}
 			}
 		
 		EditorGUILayout.EndHorizontal();
@@ -91,15 +101,10 @@ public class Methodic : EditorWindow
 	/// Executes the specified method.
 	/// </summary>
 	/// <param name="toInvoke">The method to execute.</param>
-	static void InvokeMethod (Method toInvoke)
+	/// <param name="parameters">The parameters to send the method.</param>
+	public static void InvokeMethod (Method toInvoke, object[] parameters)
 	{
-		var parameters = toInvoke.method.GetParameters();
-		
-		foreach (var param in parameters) {
-			Debug.Log(param);
-		}
-		
-		var result = toInvoke.method.Invoke(toInvoke.component, null); // null = parameters
+		var result = toInvoke.method.Invoke(toInvoke.component, parameters);
 
 		// Display the return value if one is expected
 		if (toInvoke.method.ReturnType != typeof(void)) {

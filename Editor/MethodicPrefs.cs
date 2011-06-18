@@ -1,4 +1,4 @@
-// Copyright (c) 2011 Matthew Miner
+// Copyright (c) 2011 Matthew Miner.
 
 using UnityEditor;
 using UnityEngine;
@@ -54,7 +54,7 @@ public static class MethodicPrefs
 			showPrivate = EditorGUILayout.Toggle(showPrivateLabel, showPrivate);
 			EditorGUI.indentLevel = 0;
 			
-			// Resave and reload the methods shown if options are changed
+			// Resave and reload methods shown if options are changed
 			if (GUI.changed) {
 				SavePrefs();
 				Methodic.DiscoverMethods();
