@@ -20,6 +20,8 @@ public class Methodic : EditorWindow
 		}
 	}
 	
+	public static readonly System.Version version = new System.Version(1);
+	
 	static readonly GUIContent popupLabel = new GUIContent("Method");
 	static readonly GUIContent invokeLabel = new GUIContent("Invoke", "Execute this method.");
 	
