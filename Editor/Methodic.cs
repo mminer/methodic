@@ -17,6 +17,8 @@ public class Methodic : EditorWindow
 	}
 	
 	GameObject target;
+	List<Method> methods = new List<Method>();
+	List<string> methodNames = new List<string>();
 	int selected;
 	
 	/// <summary>
@@ -35,35 +37,13 @@ public class Methodic : EditorWindow
 			return;
 		}
 		
-		var methods = new List<Method>();
-		
-		foreach (var component in target.GetComponents<MonoBehaviour>()) {
-			var type = component.GetType();
-			var publicMethods = type.GetMethods(BindingFlags.Public|BindingFlags.Instance|BindingFlags.DeclaredOnly);
-			var privateMethods = type.GetMethods(BindingFlags.NonPublic|BindingFlags.Instance|BindingFlags.DeclaredOnly);
-			
-			foreach (var method in publicMethods) {
-				methods.Add(new Method { component = component, method = method });
-			}
-			
-			foreach (var method in privateMethods) {
-				methods.Add(new Method { component = component, method = method });
-			}
-		}
-		
 		if (methods.Count == 0) {
 			GUI.enabled = false;
 		}
-
+		
 		EditorGUILayout.BeginHorizontal();
 			
-			var methodNames = new string[methods.Count];
-			
-			for (int i = 0; i < methods.Count; i++) {
-				methodNames[i] = methods[i].method.Name;
-			}
-		
-			selected = EditorGUILayout.Popup("Method", selected, methodNames);
+			selected = EditorGUILayout.Popup("Method", selected, methodNames.ToArray());
 			
 			if (GUILayout.Button("Invoke", EditorStyles.miniButton, GUILayout.ExpandWidth(false))) {
 				methods[selected].method.Invoke(methods[selected].component, null); // null = parameters
@@ -78,6 +58,27 @@ public class Methodic : EditorWindow
 	void OnSelectionChange ()
 	{
 		target = Selection.activeGameObject;
+		
+		if (target != null) {
+			methods = new List<Method>();
+			
+			foreach (var component in target.GetComponents<MonoBehaviour>()) {
+				var type = component.GetType();
+				var publicMethods = type.GetMethods(BindingFlags.Public|BindingFlags.Instance|BindingFlags.DeclaredOnly);
+				var privateMethods = type.GetMethods(BindingFlags.NonPublic|BindingFlags.Instance|BindingFlags.DeclaredOnly);
+				
+				foreach (var method in publicMethods) {
+					methods.Add(new Method { component = component, method = method });
+					methodNames.Add(method.Name);
+				}
+				
+				foreach (var method in privateMethods) {
+					methods.Add(new Method { component = component, method = method });
+					methodNames.Add(method.Name);
+				}
+			}
+		}
+		
 		Repaint();
 	}
 }
