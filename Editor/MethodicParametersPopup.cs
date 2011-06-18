@@ -85,7 +85,9 @@ public class MethodicParametersPopup : EditorWindow
 				parameters[i] = EditorGUILayout.ObjectField(info.Name, (Object)parameters[i], info.ParameterType);
 			}
 			// Unknown / unsupported
-			else {
+			else if (info.ParameterType.IsArray) {
+				EditorGUILayout.LabelField(info.Name, "Array parameter type unsupported (sends null)");
+			} else {
 				EditorGUILayout.LabelField(info.Name, "Unsupported parameter type (sends null)");
 			}
 		}
