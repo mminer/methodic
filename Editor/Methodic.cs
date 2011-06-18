@@ -38,6 +38,7 @@ public class Methodic : EditorWindow
 	static Method[] methods = {};
 	static GUIContent[] methodLabels = {};
 	static int selected;
+	static Vector2 scrollPos;
 	
 	/// <summary>
 	/// Adds Methodic to Window menu.
@@ -51,6 +52,8 @@ public class Methodic : EditorWindow
 	
 	void OnGUI ()
 	{
+		scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
+		
 		if (methods.Length == 0) {
 			GUI.enabled = false;
 		}
@@ -73,6 +76,7 @@ public class Methodic : EditorWindow
 		
 		GUI.enabled = true;
 		MethodicPrefs.OnGUI();
+		EditorGUILayout.EndScrollView();
 	}
 	
 	void OnSelectionChange ()
