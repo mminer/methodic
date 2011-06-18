@@ -46,12 +46,7 @@ public class Methodic : EditorWindow
 			selected = EditorGUILayout.Popup(popupLabel, selected, methodLabels);
 			
 			if (GUILayout.Button(invokeLabel, EditorStyles.miniButton, GUILayout.ExpandWidth(false))) {
-				var toInvoke = methods[selected];
-				var result = toInvoke.method.Invoke(toInvoke.component, null); // null = parameters
-				
-				if (toInvoke.method.ReturnType != typeof(void)) {
-					Debug.Log("[Methodic] Result: " + result);
-				}
+				InvokeMethod(methods[selected]);
 			}
 		
 		EditorGUILayout.EndHorizontal();
@@ -83,5 +78,19 @@ public class Methodic : EditorWindow
 		this.methods = methods.ToArray();
 		this.methodLabels = methodLabels.ToArray();
 		Repaint();
+	}
+	
+	/// <summary>
+	/// Executes the specified method.
+	/// </summary>
+	/// <param name="toInvoke">The method to execute.</param>
+	static void InvokeMethod (Method toInvoke)
+	{
+		var result = toInvoke.method.Invoke(toInvoke.component, null); // null = parameters
+		
+		// Display the return value if one is expected
+		if (toInvoke.method.ReturnType != typeof(void)) {
+			Debug.Log("[Methodic] Result: " + result);
+		}
 	}
 }
