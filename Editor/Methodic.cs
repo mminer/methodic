@@ -43,7 +43,7 @@ public class Methodic : EditorWindow
 	/// <summary>
 	/// Adds Methodic to Window menu.
 	/// </summary>
-	[MenuItem ("Window/Methodic")]
+	[MenuItem ("Window/Methodic %#m")]
 	static void Init ()
 	{
 		// Get existing open window, or make new one if none
