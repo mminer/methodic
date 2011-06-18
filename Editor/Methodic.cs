@@ -97,8 +97,15 @@ public class Methodic : EditorWindow
 				var allMethods = type.GetMethods(MethodicPrefs.flags);
 				
 				foreach (var method in allMethods) {
+					var label = new GUIContent("", method.ToString());
+					
+					if (MethodicPrefs.displayClass) {
+						label.text = component.GetType() + ": ";
+					}
+					
+					label.text += method.Name;
 					_methods.Add(new Method { component = component, method = method });
-					_methodLabels.Add(new GUIContent(method.Name, method.ToString()));
+					_methodLabels.Add(label);
 				}
 			}
 		}
