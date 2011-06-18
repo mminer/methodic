@@ -33,10 +33,6 @@ public class Methodic : EditorWindow
 	
 	void OnGUI ()
 	{
-		if (target == null) {
-			return;
-		}
-		
 		if (methods.Count == 0) {
 			GUI.enabled = false;
 		}
@@ -58,10 +54,11 @@ public class Methodic : EditorWindow
 	void OnSelectionChange ()
 	{
 		target = Selection.activeGameObject;
+		methods = new List<Method>();
+		methodNames = new List<string>();
+		selected = 0;
 		
 		if (target != null) {
-			methods = new List<Method>();
-			
 			foreach (var component in target.GetComponents<MonoBehaviour>()) {
 				var type = component.GetType();
 				var publicMethods = type.GetMethods(BindingFlags.Public|BindingFlags.Instance|BindingFlags.DeclaredOnly);
