@@ -1,4 +1,9 @@
-// Copyright (c) 2011 Matthew Miner.
+//
+// Methodic.cs
+//
+// Author: Matthew Miner (matthew@matthewminer.com)
+// Copyright (c) 2011
+//
 
 using UnityEditor;
 using UnityEngine;
@@ -53,8 +58,6 @@ public class Methodic : EditorWindow
 	static Panel selectedPanel;
 	static Vector2 scrollPos;
 	
-	
-	
 	/// <summary>
 	/// Adds Methodic to Window menu.
 	/// </summary>
@@ -72,12 +75,7 @@ public class Methodic : EditorWindow
 			GUILayout.FlexibleSpace();	
 			
 			var optionsToggle = GUILayout.Toggle(selectedPanel == Panel.Options, optionsLabel, EditorStyles.toolbarButton);
-			
-			if (optionsToggle) {
-				selectedPanel = Panel.Options;
-			} else {
-				selectedPanel = Panel.Main;
-			}
+			selectedPanel = optionsToggle ? Panel.Options : Panel.Main;
 		
 			if (GUILayout.Button(websiteLabel, EditorStyles.toolbarButton)) {
 				Application.OpenURL(website);

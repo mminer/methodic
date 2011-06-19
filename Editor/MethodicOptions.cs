@@ -1,4 +1,9 @@
-// Copyright (c) 2011 Matthew Miner.
+//
+// MethodicOptions.cs
+//
+// Author: Matthew Miner (matthew@matthewminer.com)
+// Copyright (c) 2011
+//
 
 using UnityEditor;
 using UnityEngine;
