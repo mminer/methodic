@@ -111,29 +111,18 @@ public class Methodic : EditorWindow
 				GUI.enabled = true;
 				break;
 			case Panel.Options:
-				if (!MethodicOptions.loaded) {
-					MethodicOptions.Load();
-				}
+				// Ignore changes to previous GUI elements
+				GUI.changed = false;
 				
 				MethodicOptions.showStatic = EditorGUILayout.Toggle(showStaticLabel, MethodicOptions.showStatic);
 				MethodicOptions.showPrivate = EditorGUILayout.Toggle(showPrivateLabel, MethodicOptions.showPrivate);
 				MethodicOptions.displayClass = EditorGUILayout.Toggle(displayClassLabel, MethodicOptions.displayClass);
 				
-				EditorGUILayout.BeginHorizontal();
-					
-					GUILayout.FlexibleSpace();
+				if (GUI.changed) {
+					MethodicOptions.Save();
+					DiscoverMethods();
+				}
 			
-					if (GUILayout.Button("Cancel")) {
-						MethodicOptions.Load();
-						selectedPanel = Panel.Main;
-					}
-					
-					if (GUILayout.Button("Save")) {
-						MethodicOptions.Save();
-						selectedPanel = Panel.Main;
-					}
-				
-				EditorGUILayout.EndHorizontal();
 				break;
 		}
 		EditorGUILayout.EndScrollView();

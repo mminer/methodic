@@ -17,16 +17,10 @@ public static class MethodicOptions
 	public static bool showPrivate { get; set; }
 	public static bool displayClass { get; set; }
 	
-	public static bool loaded { get; private set; }
-	
 	const BindingFlags constantFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 	
 	public static BindingFlags flags {
 		get {
-			if (!loaded) {
-				Load();
-			}
-			
 			var _flags = constantFlags;
 			if (showStatic) { _flags |= BindingFlags.Static; }
 			if (showPrivate) { _flags |= BindingFlags.NonPublic; }
@@ -37,12 +31,11 @@ public static class MethodicOptions
 	/// <summary>
 	/// Loads options stored in EditorPrefs.
 	/// </summary>
-	public static void Load ()
+	static MethodicOptions ()
 	{
 		showStatic = EditorPrefs.GetBool(showStaticKey, true);
 		showPrivate = EditorPrefs.GetBool(showPrivateKey, true);
 		displayClass = EditorPrefs.GetBool(displayClassKey, false);
-		loaded = true;
 	}
 	
 	/// <summary>
