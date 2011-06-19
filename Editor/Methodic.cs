@@ -38,6 +38,7 @@ public class Methodic : EditorWindow
 	
 	/// <summary>
 	/// The website to visit for information.
+	/// TODO: change this once an actual info page is available for perusal.
 	/// </summary>
 	public const string website = "http://www.matthewminer.com/";
 	
