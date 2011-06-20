@@ -53,11 +53,11 @@ public class Methodic : EditorWindow
 	static readonly GUIContent displayClassLabel = new GUIContent("Display Class", "Show the class name beside the method name.");
 	
 	static GameObject target;
+	static MethodicParameters parameters;
 	static Method[] methods = {};
 	static GUIContent[] methodLabels = {};
 	static int selectedMethod;
 	static Panel selectedPanel;
-	static Vector2 scrollPos;
 	
 	/// <summary>
 	/// Adds Methodic to Window menu.
@@ -84,7 +84,6 @@ public class Methodic : EditorWindow
 		
 		EditorGUILayout.EndHorizontal();
 		
-		scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
 		switch (selectedPanel) {
 			case Panel.Main:
 				if (methods.Length == 0) {
@@ -93,19 +92,25 @@ public class Methodic : EditorWindow
 				
 				EditorGUILayout.BeginHorizontal();
 					
-					selectedMethod = EditorGUILayout.Popup(popupLabel, selectedMethod, methodLabels);
+					var selected = EditorGUILayout.Popup(popupLabel, selectedMethod, methodLabels);
 					
-					if (GUILayout.Button(invokeLabel, EditorStyles.miniButton, GUILayout.ExpandWidth(false))) {
-						var method = methods[selectedMethod];
-					
-						if (method.hasParameters) {
-							MethodicParametersPopup.ShowPopup(method);
-						} else {
-							InvokeMethod(method, null);
+					// Refresh the parameters if we've changed the method selected
+					if (selected != selectedMethod || parameters == null) {
+						if (selected > methods.Length - 1) {
+							break;
 						}
+				
+						parameters = new MethodicParameters(methods[selected]);
+					}
+					
+					selectedMethod = selected;
+				
+					if (GUILayout.Button(invokeLabel, EditorStyles.miniButton, GUILayout.ExpandWidth(false))) {
+						Invoke();
 					}
 				
 				EditorGUILayout.EndHorizontal();
+				parameters.OnGUI();
 				
 				GUI.enabled = true;
 				break;
@@ -124,7 +129,6 @@ public class Methodic : EditorWindow
 			
 				break;
 		}
-		EditorGUILayout.EndScrollView();
 	}
 	
 	void OnSelectionChange ()
@@ -139,6 +143,7 @@ public class Methodic : EditorWindow
 	{
 		target = Selection.activeGameObject;
 		selectedMethod = 0;
+		parameters = null;
 		var _methods = new List<Method>();
 		var _methodLabels = new List<GUIContent>();
 		
@@ -172,18 +177,18 @@ public class Methodic : EditorWindow
 	/// </summary>
 	/// <param name="toInvoke">The method to execute.</param>
 	/// <param name="parameters">The parameters to send the method.</param>
-	public static void InvokeMethod (Method toInvoke, object[] parameters)
+	static void Invoke ()
 	{
 		try {
-			var result = toInvoke.method.Invoke(toInvoke.component, parameters);
+			var method = methods[selectedMethod];
+			var result = method.method.Invoke(method.component, parameters.parameters);
 
 			// Display the return value if one is expected
-			if (toInvoke.method.ReturnType != typeof(void)) {
+			if (method.method.ReturnType != typeof(void)) {
 				Debug.Log("[Methodic] Result: " + result);
 			}
 		} catch (System.ArgumentException e) {
 			Debug.LogError("[Methodic] Unable to invoke method: " + e.Message);
 		}
-		
 	}
 }
