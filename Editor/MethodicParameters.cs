@@ -1,5 +1,5 @@
 //
-// MethodicParametersPopup.cs
+// MethodicParameters.cs
 //
 // Author: Matthew Miner (matthew@matthewminer.com)
 // Copyright (c) 2011

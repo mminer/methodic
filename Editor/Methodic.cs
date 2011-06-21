@@ -18,22 +18,22 @@ public class Methodic : EditorWindow
 	/// <summary>
 	/// The version of Methodic.
 	/// </summary>
-	public static readonly System.Version version = new System.Version(0, 1);
+	public static readonly System.Version version = new System.Version(0, 2);
 	
 	/// <summary>
 	/// The website to visit for information.
-	/// TODO: change this once an actual info page is available for perusal.
+	/// TODO Change this once an actual info page is available for perusal.
 	/// </summary>
 	public const string website = "http://www.matthewminer.com/";
 	
 	/// <summary>
 	/// Holds method info and its parent component.
 	/// </summary>
-	public class Method
+	class Method
 	{
-		public readonly Component component;
-		public readonly MethodInfo method;
-		public readonly MethodicParameters parameters;
+		readonly Component component;
+		readonly MethodInfo method;
+		readonly MethodicParameters parameters;
 		
 		/// <summary>
 		/// Whether the method accepts any parameters.
@@ -52,6 +52,14 @@ public class Methodic : EditorWindow
 			this.component = component;
 			this.method = method;
 			this.parameters = new MethodicParameters(method);
+		}
+		
+		/// <summary>
+		/// Displays a form where parameters can be modified.
+		/// </summary>
+		public void DisplayParametersForm ()
+		{
+			parameters.OnGUI();
 		}
 		
 		/// <summary>
@@ -76,8 +84,8 @@ public class Methodic : EditorWindow
 	
 	static readonly GUIContent optionsLabel = new GUIContent("Options", "Customize which methods are shown.");
 	static readonly GUIContent websiteLabel = new GUIContent("Website", "Instructions and contact information.");
-	static readonly GUIContent popupLabel   = new GUIContent("Method");
-	static readonly GUIContent invokeLabel  = new GUIContent("Invoke", "Execute this method.");
+	static readonly GUIContent popupLabel = new GUIContent("Method");
+	static readonly GUIContent invokeLabel = new GUIContent("Invoke", "Execute this method.");
 	
 	Method[] methods = {};
 	GUIContent[] methodLabels = {};
@@ -106,6 +114,7 @@ public class Methodic : EditorWindow
 	
 	void OnGUI ()
 	{
+		// Toolbar
 		EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
 		
 			GUILayout.FlexibleSpace();	
@@ -119,12 +128,10 @@ public class Methodic : EditorWindow
 		
 		EditorGUILayout.EndHorizontal();
 		
+		// Panel
 		switch (selectedPanel) {
 			case Panel.Main:
-				if (selectedMethod == null) {
-					GUI.enabled = false;
-				}
-				
+				GUI.enabled = selectedMethod != null;
 				EditorGUILayout.BeginHorizontal();
 					
 					methodIndex = EditorGUILayout.Popup(popupLabel, methodIndex, methodLabels);
@@ -136,8 +143,8 @@ public class Methodic : EditorWindow
 				EditorGUILayout.EndHorizontal();
 				
 				if (selectedMethod != null && selectedMethod.hasParameters) {
-					Divider();
-					selectedMethod.parameters.OnGUI();
+					MethodicUtil.DrawDivider();
+					selectedMethod.DisplayParametersForm();
 				}
 			
 				GUI.enabled = true;
@@ -186,22 +193,6 @@ public class Methodic : EditorWindow
 		
 		methods = _methods.ToArray();
 		methodLabels = _methodLabels.ToArray();
-		EditorWindow.GetWindow<Methodic>().Repaint();
-	}
-	
-	/// <summary>
-	/// Draws a visibile dividing line between GUI components.
-	/// </summary>
-	void Divider ()
-	{
-		EditorGUILayout.Space();
-		
-		var spaceRect = GUILayoutUtility.GetLastRect();
-		var top = spaceRect.yMax - (spaceRect.height / 2) - 1;
-		var lineStart = new Vector3(0, top);
-		var lineEnd = new Vector3(position.width, top);
-		
-		Handles.color = Color.grey;
-		Handles.DrawLine(lineStart, lineEnd);
+		Repaint();
 	}
 }
