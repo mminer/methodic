@@ -16,22 +16,6 @@ using System.Reflection;
 public class Methodic : EditorWindow
 {
 	/// <summary>
-	/// A simple struct for holding method info and its parent component.
-	/// </summary>
-	public struct Method
-	{
-		public Component component;
-		public MethodInfo method;
-		
-		/// <summary>
-		/// Whether the method accepts any parameters.
-		/// </summary>
-		public bool hasParameters {
-			get { return method.GetParameters().Length > 0; }
-		}
-	}
-	
-	/// <summary>
 	/// The version of Methodic.
 	/// </summary>
 	public static readonly System.Version version = new System.Version(0, 1);
@@ -42,22 +26,73 @@ public class Methodic : EditorWindow
 	/// </summary>
 	public const string website = "http://www.matthewminer.com/";
 	
+	/// <summary>
+	/// Holds method info and its parent component.
+	/// </summary>
+	public class Method
+	{
+		public readonly Component component;
+		public readonly MethodInfo method;
+		public readonly MethodicParameters parameters;
+		
+		/// <summary>
+		/// Whether the method accepts any parameters.
+		/// </summary>
+		public bool hasParameters {
+			get { return method.GetParameters().Length > 0; }
+		}
+		
+		/// <summary>
+		/// Creates a new Method instance.
+		/// </summary>
+		/// <param name="component">The component the scripts are attached to.</param>
+		/// <param name="method">The method.</param>
+		public Method (Component component, MethodInfo method)
+		{
+			this.component = component;
+			this.method = method;
+			this.parameters = new MethodicParameters(method);
+		}
+		
+		/// <summary>
+		/// Executes the method.
+		/// </summary>
+		public void Invoke ()
+		{
+			try {
+				var result = method.Invoke(component, parameters.parameters);
+				
+				// Display the return value if one is expected
+				if (method.ReturnType != typeof(void)) {
+					Debug.Log("[Methodic] Result: " + result);
+				}
+			} catch (System.ArgumentException e) {
+				Debug.LogError("[Methodic] Unable to invoke method: " + e.Message);
+			}
+		}
+	}
+	
 	enum Panel { Main, Options }
 	
 	static readonly GUIContent optionsLabel = new GUIContent("Options", "Customize which methods are shown.");
 	static readonly GUIContent websiteLabel = new GUIContent("Website", "Instructions and contact information.");
-	static readonly GUIContent popupLabel = new GUIContent("Method");
-	static readonly GUIContent invokeLabel = new GUIContent("Invoke", "Execute this method.");
-	static readonly GUIContent showStaticLabel = new GUIContent("Show Static", "Show methods beyond those belonging to the instance.");
-	static readonly GUIContent showPrivateLabel = new GUIContent("Show Private", "Show methods unavailable outside the class.");
-	static readonly GUIContent displayClassLabel = new GUIContent("Display Class", "Show the class name beside the method name.");
+	static readonly GUIContent popupLabel   = new GUIContent("Method");
+	static readonly GUIContent invokeLabel  = new GUIContent("Invoke", "Execute this method.");
 	
-	static GameObject target;
-	static MethodicParameters parameters;
-	static Method[] methods = {};
-	static GUIContent[] methodLabels = {};
-	static int selectedMethod;
-	static Panel selectedPanel;
+	Method[] methods = {};
+	GUIContent[] methodLabels = {};
+	Panel selectedPanel;
+	int methodIndex;
+	
+	Method selectedMethod {
+		get {
+			if (methodIndex >= 0 && methodIndex < methods.Length) {
+				return methods[methodIndex];
+			} else {
+				return null;
+			}
+		}
+	}
 	
 	/// <summary>
 	/// Adds Methodic to Window menu.
@@ -86,47 +121,30 @@ public class Methodic : EditorWindow
 		
 		switch (selectedPanel) {
 			case Panel.Main:
-				if (methods.Length == 0) {
+				if (selectedMethod == null) {
 					GUI.enabled = false;
 				}
 				
 				EditorGUILayout.BeginHorizontal();
 					
-					var selected = EditorGUILayout.Popup(popupLabel, selectedMethod, methodLabels);
+					methodIndex = EditorGUILayout.Popup(popupLabel, methodIndex, methodLabels);
 					
-					// Refresh the parameters if we've changed the method selected
-					if (selected != selectedMethod || parameters == null) {
-						if (selected > methods.Length - 1) {
-							break;
-						}
-				
-						parameters = new MethodicParameters(methods[selected]);
-					}
-					
-					selectedMethod = selected;
-				
 					if (GUILayout.Button(invokeLabel, EditorStyles.miniButton, GUILayout.ExpandWidth(false))) {
-						Invoke();
+						selectedMethod.Invoke();
 					}
 				
 				EditorGUILayout.EndHorizontal();
-				parameters.OnGUI();
 				
-				GUI.enabled = true;
-				break;
-			case Panel.Options:
-				// Ignore changes to previous GUI elements
-				GUI.changed = false;
-				
-				MethodicOptions.showStatic = EditorGUILayout.Toggle(showStaticLabel, MethodicOptions.showStatic);
-				MethodicOptions.showPrivate = EditorGUILayout.Toggle(showPrivateLabel, MethodicOptions.showPrivate);
-				MethodicOptions.displayClass = EditorGUILayout.Toggle(displayClassLabel, MethodicOptions.displayClass);
-				
-				if (GUI.changed) {
-					MethodicOptions.Save();
-					DiscoverMethods();
+				if (selectedMethod != null && selectedMethod.hasParameters) {
+					Divider();
+					selectedMethod.parameters.OnGUI();
 				}
 			
+				GUI.enabled = true;
+				break;
+			
+			case Panel.Options:
+				MethodicOptions.OnGUI();
 				break;
 		}
 	}
@@ -139,13 +157,12 @@ public class Methodic : EditorWindow
 	/// <summary>
 	/// Discovers the selected game object's methods and refreshes the GUI.
 	/// </summary>
-	public static void DiscoverMethods ()
+	public void DiscoverMethods ()
 	{
-		target = Selection.activeGameObject;
-		selectedMethod = 0;
-		parameters = null;
+		var target = Selection.activeGameObject;
 		var _methods = new List<Method>();
 		var _methodLabels = new List<GUIContent>();
+		methodIndex = 0;
 		
 		if (target != null) {
 			// Discover methods in attached components
@@ -161,7 +178,7 @@ public class Methodic : EditorWindow
 					}
 					
 					label.text += method.Name;
-					_methods.Add(new Method { component = component, method = method });
+					_methods.Add(new Method(component, method));
 					_methodLabels.Add(label);
 				}
 			}
@@ -173,22 +190,18 @@ public class Methodic : EditorWindow
 	}
 	
 	/// <summary>
-	/// Executes the specified method.
+	/// Draws a visibile dividing line between GUI components.
 	/// </summary>
-	/// <param name="toInvoke">The method to execute.</param>
-	/// <param name="parameters">The parameters to send the method.</param>
-	static void Invoke ()
+	void Divider ()
 	{
-		try {
-			var method = methods[selectedMethod];
-			var result = method.method.Invoke(method.component, parameters.parameters);
-
-			// Display the return value if one is expected
-			if (method.method.ReturnType != typeof(void)) {
-				Debug.Log("[Methodic] Result: " + result);
-			}
-		} catch (System.ArgumentException e) {
-			Debug.LogError("[Methodic] Unable to invoke method: " + e.Message);
-		}
+		EditorGUILayout.Space();
+		
+		var spaceRect = GUILayoutUtility.GetLastRect();
+		var top = spaceRect.yMax - (spaceRect.height / 2) - 1;
+		var lineStart = new Vector3(0, top);
+		var lineEnd = new Vector3(position.width, top);
+		
+		Handles.color = Color.grey;
+		Handles.DrawLine(lineStart, lineEnd);
 	}
 }

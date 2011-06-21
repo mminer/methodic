@@ -14,13 +14,17 @@ using System.Reflection;
 /// </summary>
 public static class MethodicOptions
 {
+	static readonly GUIContent showStaticLabel = new GUIContent("Show Static", "Show methods beyond those belonging to the instance.");
+	static readonly GUIContent showPrivateLabel = new GUIContent("Show Private", "Show methods unavailable outside the class.");
+	static readonly GUIContent displayClassLabel = new GUIContent("Display Class", "Show the class name beside the method name.");
+	
 	const string showStaticKey = "methodic_include_static";
 	const string showPrivateKey = "methodic_include_private";
 	const string displayClassKey = "methodic_display_class";
 	
-	public static bool showStatic { get; set; }
-	public static bool showPrivate { get; set; }
-	public static bool displayClass { get; set; }
+	public static bool showStatic { get; private set; }
+	public static bool showPrivate { get; private set; }
+	public static bool displayClass { get; private set; }
 	
 	const BindingFlags constantFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 	
@@ -43,10 +47,25 @@ public static class MethodicOptions
 		displayClass = EditorPrefs.GetBool(displayClassKey, false);
 	}
 	
+	public static void OnGUI ()
+	{
+		// Ignore changes to previous GUI elements
+		GUI.changed = false;
+		
+		showStatic = EditorGUILayout.Toggle(showStaticLabel, MethodicOptions.showStatic);
+		showPrivate = EditorGUILayout.Toggle(showPrivateLabel, MethodicOptions.showPrivate);
+		displayClass = EditorGUILayout.Toggle(displayClassLabel, MethodicOptions.displayClass);
+		
+		if (GUI.changed) {
+			Save();
+			EditorWindow.GetWindow<Methodic>().DiscoverMethods();
+		}
+	}
+	
 	/// <summary>
 	/// Saves options to EditorPrefs for later retrieval.
 	/// </summary>
-	public static void Save ()
+	static void Save ()
 	{
 		EditorPrefs.SetBool(showStaticKey, showStatic);
 		EditorPrefs.SetBool(showPrivateKey, showPrivate);

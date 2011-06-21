@@ -22,9 +22,9 @@ public class MethodicParameters
 	/// Sets up the parameters.
 	/// </summary>
 	/// <param name="method">The method to invoke.</param>
-	public MethodicParameters (Methodic.Method method)
+	public MethodicParameters (MethodInfo method)
 	{
-		info = method.method.GetParameters();
+		info = method.GetParameters();
 		parameters = new object[info.Length];
 		
 		// Set the parameters to default values
