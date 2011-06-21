@@ -87,9 +87,9 @@ public class Methodic : EditorWindow
 	static readonly GUIContent popupLabel = new GUIContent("Method");
 	static readonly GUIContent invokeLabel = new GUIContent("Invoke", "Execute this method.");
 	
+	Panel selectedPanel;
 	Method[] methods = {};
 	GUIContent[] methodLabels = {};
-	Panel selectedPanel;
 	int methodIndex;
 	
 	Method selectedMethod {
@@ -167,9 +167,8 @@ public class Methodic : EditorWindow
 	public void DiscoverMethods ()
 	{
 		var target = Selection.activeGameObject;
-		var _methods = new List<Method>();
-		var _methodLabels = new List<GUIContent>();
-		methodIndex = 0;
+		var methods = new List<Method>();
+		var methodLabels = new List<GUIContent>();
 		
 		if (target != null) {
 			// Discover methods in attached components
@@ -185,14 +184,15 @@ public class Methodic : EditorWindow
 					}
 					
 					label.text += method.Name;
-					_methods.Add(new Method(component, method));
-					_methodLabels.Add(label);
+					methods.Add(new Method(component, method));
+					methodLabels.Add(label);
 				}
 			}
 		}
 		
-		methods = _methods.ToArray();
-		methodLabels = _methodLabels.ToArray();
+		this.methods = methods.ToArray();
+		this.methodLabels = methodLabels.ToArray();
+		this.methodIndex = 0;
 		Repaint();
 	}
 }
