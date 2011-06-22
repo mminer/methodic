@@ -57,6 +57,8 @@ public class MethodicParameters
 				parameters[i] = EditorGUILayout.FloatField(label, (float)parameters[i]);
 			} else if (paramInfo.ParameterType == typeof(string)) {
 				parameters[i] = EditorGUILayout.TextField(label, (string)parameters[i]);
+			} else if (paramInfo.ParameterType == typeof(bool)) {
+				parameters[i] = EditorGUILayout.Toggle(label, (bool)parameters[i]);
 			}
 			// Unity objects / structs
 			else if (paramInfo.ParameterType == typeof(Color)) {
