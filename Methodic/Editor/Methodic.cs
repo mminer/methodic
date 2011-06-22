@@ -7,6 +7,7 @@
 
 using UnityEditor;
 using UnityEngine;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -18,7 +19,7 @@ public class Methodic : EditorWindow
 	/// <summary>
 	/// The version of Methodic.
 	/// </summary>
-	public static readonly System.Version version = new System.Version(0, 2);
+	public static readonly Version version = new Version(0, 2);
 	
 	/// <summary>
 	/// The website to visit for information.
@@ -81,7 +82,7 @@ public class Methodic : EditorWindow
 				if (method.ReturnType != typeof(void)) {
 					Debug.Log("[Methodic] Result: " + result);
 				}
-			} catch (System.ArgumentException e) {
+			} catch (ArgumentException e) {
 				Debug.LogError("[Methodic] Unable to invoke method: " + e.Message);
 			}
 		}
