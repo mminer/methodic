@@ -19,7 +19,7 @@ public class Methodic : EditorWindow
 	/// <summary>
 	/// The version of Methodic.
 	/// </summary>
-	public static readonly Version version = new Version(0, 2);
+	public static readonly Version version = new Version(1, 0);
 	
 	/// <summary>
 	/// The website to visit for information.
