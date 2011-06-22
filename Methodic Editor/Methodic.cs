@@ -177,6 +177,7 @@ public class Methodic : EditorWindow
 				var allMethods = type.GetMethods(MethodicOptions.flags);
 				
 				foreach (var method in allMethods) {
+					methods.Add(new Method(component, method));
 					var label = new GUIContent("", method.ToString());
 					
 					if (MethodicOptions.displayClass) {
@@ -184,7 +185,6 @@ public class Methodic : EditorWindow
 					}
 					
 					label.text += method.Name;
-					methods.Add(new Method(component, method));
 					methodLabels.Add(label);
 				}
 			}
