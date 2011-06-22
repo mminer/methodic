@@ -23,7 +23,6 @@ public class Methodic : EditorWindow
 	
 	/// <summary>
 	/// The website to visit for information.
-	/// TODO Change this once an actual info page is available for perusal.
 	/// </summary>
 	public const string website = "http://www.matthewminer.com/";
 	
@@ -129,10 +128,6 @@ public class Methodic : EditorWindow
 			
 			var optionsToggle = GUILayout.Toggle(selectedPanel == Panel.Options, optionsLabel, EditorStyles.toolbarButton);
 			selectedPanel = optionsToggle ? Panel.Options : Panel.Main;
-		
-			if (GUILayout.Button(websiteLabel, EditorStyles.toolbarButton)) {
-				Application.OpenURL(website);
-			}
 		
 		EditorGUILayout.EndHorizontal();
 		
