@@ -2,7 +2,7 @@
 	"publisher_id": 0,
 	"publisher_package_id": 0,
 	"title": "Methodic",
-	"description": "Execute functions defined in a game object's components through an easy-to-use GUI. Ideal for manually triggering events during gameplay and for modifying game objects in the editor.",
+	"description": "Methodic enables easy execution of functions attached to a game object with a simple GUI. Ideal for manually triggering events during gameplay and for modifying game objects in the editor.",
 	"changes": "Initial release.",
 	"version_name": "1.0",
 	"category": 3,
