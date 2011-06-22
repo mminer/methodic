@@ -43,6 +43,13 @@ public class Methodic : EditorWindow
 		}
 		
 		/// <summary>
+		/// The name of the method.
+		/// </summary>
+		public string name {
+			get { return method.Name; }
+		}
+		
+		/// <summary>
 		/// Creates a new Method instance.
 		/// </summary>
 		/// <param name="component">The component the scripts are attached to.</param>
@@ -137,6 +144,7 @@ public class Methodic : EditorWindow
 					methodIndex = EditorGUILayout.Popup(popupLabel, methodIndex, methodLabels);
 					
 					if (GUILayout.Button(invokeLabel, EditorStyles.miniButton, GUILayout.ExpandWidth(false))) {
+						Undo.RegisterSceneUndo(selectedMethod.name + " Call");
 						selectedMethod.Invoke();
 					}
 				

@@ -2,11 +2,12 @@ Methodic
 ========
 
 Methodic provides a GUI for triggering functions defined in a game object's
-components. This can be used to manually trigger events during game play as well
-as make modifications to game objects in the editor.
+components. This can be used to manually trigger events during game play and to
+modify game objects in the editor.
 
-The Methodic window is opened from the Window > Methodic menu or with the hotkey
-shift-command-m (Mac) / shift-control-m (Windows).
+Open the Methodic window by selecting the Window > Methodic menu or using
+hotkeys shift-command-m (Mac) / shift-control-m (Windows).
+
 
 Version
 -------
