@@ -1,19 +1,27 @@
 Methodic
 ========
 
-Methodic provides a GUI for triggering functions defined in a game object's
+Methodic provides a GUI for executing functions defined in a game object's
 components. This can be used to manually trigger events during gameplay and to
 modify game objects in the editor.
 
-Open the Methodic window by selecting the Window > Methodic menu or using
-hotkeys shift-command-m (Mac) / shift-control-m (Windows).
+Open the Methodic window by selecting the Window > Methodic menu. For additional
+information on using Methodic please refer to the included Getting Started
+guide.
+
+
+Known Limitations
+-----------------
+Currently Methodic does not support array parameters. In such cases a value of
+null is sent when the function in invoked. This happens also when the parameter
+type is unrecognized; say, if it's a class of your own creation.
 
 
 Version
 -------
-1.0 - June 22, 2011
+1.0.1 - June 23, 2011
 
 
 Contact
 -------
-Please send feedback and suggestions to Matthew Miner: matthew@matthewminer.com
+Please send feedback and suggestions to Matthew Miner: matthew@matthewminer.com.

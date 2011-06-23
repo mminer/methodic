@@ -19,7 +19,7 @@ public class Methodic : EditorWindow
 	/// <summary>
 	/// The version of Methodic.
 	/// </summary>
-	public static readonly Version version = new Version(1, 0);
+	public static readonly Version version = new Version(1, 0, 1);
 	
 	/// <summary>
 	/// The website to visit for information.
@@ -90,7 +90,6 @@ public class Methodic : EditorWindow
 	enum Panel { Main, Options }
 	
 	static readonly GUIContent optionsLabel = new GUIContent("Options", "Customize which methods are shown.");
-	static readonly GUIContent websiteLabel = new GUIContent("Website", "Instructions and contact information.");
 	static readonly GUIContent popupLabel = new GUIContent("Method");
 	static readonly GUIContent invokeLabel = new GUIContent("Invoke", "Execute this method.");
 	
