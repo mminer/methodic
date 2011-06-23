@@ -2,4 +2,4 @@
 .DS_Store
 
 # Ignore Unity scene files.
-.unity
+*.unity
