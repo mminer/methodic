@@ -86,7 +86,7 @@ public class MethodicParameters
 				var selected = EditorGUILayout.Popup(label, (int)parameters[i], names);
 				parameters[i] = enumValues.GetValue(selected);
 			} else if (typeof(Object).IsAssignableFrom(paramInfo.ParameterType)) { // Transform, GameObject, etc.
-				parameters[i] = EditorGUILayout.ObjectField(label, (Object)parameters[i], paramInfo.ParameterType);
+				parameters[i] = EditorGUILayout.ObjectField(label, (Object)parameters[i], paramInfo.ParameterType, true);
 			}
 			// Unknown / unsupported
 			else if (paramInfo.ParameterType.IsArray) {
