@@ -17,11 +17,15 @@ null is sent when the function in invoked. This happens also when the parameter
 type is unrecognized; say, if it's a class of your own creation.
 
 
-Version
--------
+Version History
+---------------
+1.0.2 - March 8, 2012
+- Updated EditorGUILayout.ObjectField() call to remove deprecation warning.
+
 1.0.1 - June 23, 2011
+- Initial release.
 
 
 Contact
 -------
-Please send feedback and suggestions to Matthew Miner: matthew@matthewminer.com.
+Please send feedback and suggestions to Matthew Miner: matthew@matthewminer.com
