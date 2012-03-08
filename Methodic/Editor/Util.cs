@@ -1,7 +1,10 @@
 //
 // Util.cs
 //
-// Author: Matthew Miner (matthew@matthewminer.com)
+// Author: Matthew Miner
+//         matthew@matthewminer.com
+//         http://www.matthewminer.com/
+//
 // Copyright (c) 2012
 //
 

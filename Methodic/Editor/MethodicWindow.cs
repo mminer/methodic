@@ -1,93 +1,24 @@
 //
 // MethodicWindow.cs
 //
-// Author: Matthew Miner (matthew@matthewminer.com)
+// Author: Matthew Miner
+//         matthew@matthewminer.com
+//         http://www.matthewminer.com/
+//
 // Copyright (c) 2012
 //
 
-using UnityEditor;
-using UnityEngine;
+using Methodic;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using Methodic;
+using UnityEditor;
+using UnityEngine;
 
 /// <summary>
 /// Displays a dropdown menu of functions available for the selected game object to access.
 /// </summary>
 public class MethodicWindow : EditorWindow
 {
-	/// <summary>
-	/// The version of Methodic.
-	/// </summary>
-	public static readonly Version version = new Version(1, 0, 2);
-
-	/// <summary>
-	/// The website to visit for information.
-	/// </summary>
-	public const string website = "http://www.matthewminer.com/";
-
-	/// <summary>
-	/// Holds method info and its parent component.
-	/// </summary>
-	class Method
-	{
-		readonly Component component;
-		readonly MethodInfo method;
-		readonly ParametersPanel parameters;
-
-		/// <summary>
-		/// Whether the method accepts any parameters.
-		/// </summary>
-		public bool hasParameters {
-			get { return method.GetParameters().Length > 0; }
-		}
-
-		/// <summary>
-		/// The name of the method.
-		/// </summary>
-		public string name {
-			get { return method.Name; }
-		}
-
-		/// <summary>
-		/// Creates a new Method instance.
-		/// </summary>
-		/// <param name="component">The component the scripts are attached to.</param>
-		/// <param name="method">The method.</param>
-		public Method (Component component, MethodInfo method)
-		{
-			this.component = component;
-			this.method = method;
-			this.parameters = new ParametersPanel(method);
-		}
-
-		/// <summary>
-		/// Displays a form where parameters can be modified.
-		/// </summary>
-		public void DisplayParameters ()
-		{
-			parameters.OnGUI();
-		}
-
-		/// <summary>
-		/// Executes the method.
-		/// </summary>
-		public void Invoke ()
-		{
-			try {
-				var result = method.Invoke(component, parameters.parameters);
-
-				// Display the return value if one is expected
-				if (method.ReturnType != typeof(void)) {
-					Debug.Log("[Methodic] Result: " + result);
-				}
-			} catch (ArgumentException e) {
-				Debug.LogError("[Methodic] Unable to invoke method: " + e.Message);
-			}
-		}
-	}
-
 	enum Panel { Main, Preferences }
 
 	static readonly GUIContent optionsLabel = new GUIContent("Preferences", "Customize which methods are shown.");
