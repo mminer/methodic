@@ -8,9 +8,9 @@
 // Copyright (c) 2012
 //
 
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
-using System.Reflection;
 
 namespace Methodic
 {
