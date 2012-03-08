@@ -2,7 +2,7 @@
 // MethodicUtil.cs
 //
 // Author: Matthew Miner (matthew@matthewminer.com)
-// Copyright (c) 2011
+// Copyright (c) 2012
 //
 
 using UnityEditor;
