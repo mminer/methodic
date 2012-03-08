@@ -109,16 +109,6 @@ public class MethodicWindow : EditorWindow
 		}
 	}
 
-	/// <summary>
-	/// Adds Methodic to Window menu.
-	/// </summary>
-	[MenuItem ("Window/Methodic %#m")]
-	static void Init ()
-	{
-		// Get existing open window, or make new one if none
-		GetWindow<MethodicWindow>();
-	}
-
 	void OnGUI ()
 	{
 		// Toolbar

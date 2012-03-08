@@ -16,9 +16,17 @@ namespace Methodic
 	/// </summary>
 	public static class Preferences
 	{
-		static readonly GUIContent showStaticLabel = new GUIContent("Show Static", "Show methods beyond those belonging to the instance.");
-		static readonly GUIContent showPrivateLabel = new GUIContent("Show Private", "Show methods unavailable outside the class.");
-		static readonly GUIContent displayClassLabel = new GUIContent("Display Class", "Show the class name beside the method name.");
+		static readonly GUIContent showStaticLabel = new GUIContent(
+				"Show Static",
+				"Show methods beyond those belonging to the instance.");
+
+		static readonly GUIContent showPrivateLabel = new GUIContent(
+				"Show Private",
+				"Show methods unavailable outside the class.");
+
+		static readonly GUIContent displayClassLabel = new GUIContent(
+				"Display Class",
+				"Show the class name beside the method name.");
 
 		const string showStaticKey = "methodic_include_static";
 		const string showPrivateKey = "methodic_include_private";
