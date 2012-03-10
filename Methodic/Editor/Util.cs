@@ -16,12 +16,12 @@ namespace Methodic
 	/// <summary>
 	/// Utility functions.
 	/// </summary>
-	public static class Util
+	static class Util
 	{
 		/// <summary>
 		/// Displays a visibile dividing line between GUI components.
 		/// </summary>
-		public static void DrawDivider ()
+		internal static void DrawDivider ()
 		{
 			EditorGUILayout.Space();
 

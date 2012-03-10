@@ -14,7 +14,7 @@ using UnityEngine;
 
 namespace Methodic
 {
-	internal class Parameter
+	class Parameter
 	{
 		internal object val { get; private set; }
 		readonly ParameterInfo info;

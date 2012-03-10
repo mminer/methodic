@@ -1,5 +1,5 @@
 //
-// ParametersPanel.cs
+// Parameters.cs
 //
 // Author: Matthew Miner
 //         matthew@matthewminer.com
@@ -18,7 +18,7 @@ namespace Methodic
 	/// <summary>
 	/// Panel for inputting parameters into a method for execution.
 	/// </summary>
-	internal class ParametersPanel
+	class Parameters
 	{
 		readonly Parameter[] parameters;
 		Vector2 scrollPos;
@@ -34,7 +34,7 @@ namespace Methodic
 		/// Sets up the parameters.
 		/// </summary>
 		/// <param name="method">The method to invoke.</param>
-		internal ParametersPanel (MethodInfo method)
+		internal Parameters (MethodInfo method)
 		{
 			var info = method.GetParameters();
 			parameters = new Parameter[info.Length];

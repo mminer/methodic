@@ -17,16 +17,16 @@ namespace Methodic
 	/// <summary>
 	/// Holds method info and its parent component.
 	/// </summary>
-	public class Method
+	class Method
 	{
 		readonly Component component;
 		readonly MethodInfo method;
-		readonly ParametersPanel parameters;
+		readonly Parameters parameters;
 
 		/// <summary>
 		/// The name of the method.
 		/// </summary>
-		public string name {
+		internal string name {
 			get { return method.Name; }
 		}
 
@@ -35,17 +35,17 @@ namespace Methodic
 		/// </summary>
 		/// <param name="component">The component the scripts are attached to.</param>
 		/// <param name="method">The method.</param>
-		public Method (Component component, MethodInfo method)
+		internal Method (Component component, MethodInfo method)
 		{
 			this.component = component;
 			this.method = method;
-			this.parameters = new ParametersPanel(method);
+			this.parameters = new Parameters(method);
 		}
 
 		/// <summary>
 		/// If method has parameters, displays fields for them to be modified.
 		/// </summary>
-		public void OnGUI ()
+		internal void OnGUI ()
 		{
 			if (method.GetParameters().Length > 0) {
 				Util.DrawDivider();
@@ -56,7 +56,7 @@ namespace Methodic
 		/// <summary>
 		/// Executes the method.
 		/// </summary>
-		public void Invoke ()
+		internal void Invoke ()
 		{
 			try {
 				var result = method.Invoke(component, parameters.parametersArray);

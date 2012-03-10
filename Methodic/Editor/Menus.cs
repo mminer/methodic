@@ -16,7 +16,7 @@ namespace Methodic
 	/// <summary>
 	/// Menu items to open Methodic.
 	/// </summary>
-	public class Menus
+	static class Menus
 	{
 		[MenuItem ("Window/Methodic %#m")]
 		static void OpenMethodic ()

@@ -35,13 +35,13 @@ namespace Methodic
 		const string showPrivateKey = "methodic_include_private";
 		const string displayClassKey = "methodic_display_class";
 
-		public static bool showStatic { get; private set; }
-		public static bool showPrivate { get; private set; }
-		public static bool displayClass { get; private set; }
+		internal static bool showStatic { get; private set; }
+		internal static bool showPrivate { get; private set; }
+		internal static bool displayClass { get; private set; }
 
 		const BindingFlags constantFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
-		public static BindingFlags flags {
+		internal static BindingFlags flags {
 			get {
 				var _flags = constantFlags;
 				if (showStatic) { _flags |= BindingFlags.Static; }
@@ -71,7 +71,7 @@ namespace Methodic
 
 			if (GUI.changed) {
 				Save();
-				EditorWindow.GetWindow<MethodicWindow>().DiscoverMethods();
+				EditorWindow.GetWindow<MethodicWindow>().OnSelectionChange();
 			}
 		}
 
