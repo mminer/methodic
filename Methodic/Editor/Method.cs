@@ -24,13 +24,6 @@ namespace Methodic
 		readonly ParametersPanel parameters;
 
 		/// <summary>
-		/// Whether the method accepts any parameters.
-		/// </summary>
-		public bool hasParameters {
-			get { return method.GetParameters().Length > 0; }
-		}
-
-		/// <summary>
 		/// The name of the method.
 		/// </summary>
 		public string name {
@@ -50,11 +43,14 @@ namespace Methodic
 		}
 
 		/// <summary>
-		/// Displays a form where parameters can be modified.
+		/// If method has parameters, displays fields for them to be modified.
 		/// </summary>
-		public void DisplayParameters ()
+		public void OnGUI ()
 		{
-			parameters.OnGUI();
+			if (method.GetParameters().Length > 0) {
+				Util.DrawDivider();
+				parameters.OnGUI();
+			}
 		}
 
 		/// <summary>

@@ -18,7 +18,7 @@ namespace Methodic
 	/// <summary>
 	/// Panel for inputting parameters into a method for execution.
 	/// </summary>
-	public class ParametersPanel
+	internal class ParametersPanel
 	{
 		readonly Parameter[] parameters;
 		Vector2 scrollPos;
@@ -34,7 +34,7 @@ namespace Methodic
 		/// Sets up the parameters.
 		/// </summary>
 		/// <param name="method">The method to invoke.</param>
-		public ParametersPanel (MethodInfo method)
+		internal ParametersPanel (MethodInfo method)
 		{
 			var info = method.GetParameters();
 			parameters = new Parameter[info.Length];
@@ -44,7 +44,7 @@ namespace Methodic
 			}
 		}
 
-		public void OnGUI ()
+		internal void OnGUI ()
 		{
 			scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
 

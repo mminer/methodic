@@ -67,9 +67,8 @@ public class MethodicWindow : EditorWindow
 
 				EditorGUILayout.EndHorizontal();
 
-				if (selectedMethod != null && selectedMethod.hasParameters) {
-					Util.DrawDivider();
-					selectedMethod.DisplayParameters();
+				if (selectedMethod != null) {
+					selectedMethod.OnGUI();
 				}
 
 				GUI.enabled = true;
