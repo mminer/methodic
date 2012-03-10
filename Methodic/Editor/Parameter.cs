@@ -14,43 +14,56 @@ using UnityEngine;
 
 namespace Methodic
 {
-	public static class Parameter
+	internal class Parameter
 	{
+		internal object val { get; private set; }
+		readonly ParameterInfo info;
+		readonly GUIContent label;
+
+		internal Parameter (ParameterInfo info)
+		{
+			this.info = info;
+			this.label = new GUIContent(info.Name, info.ParameterType.Name);
+
+			// Set the parameter to a default value
+			if (info.ParameterType.IsValueType) {
+				this.val = System.Activator.CreateInstance(info.ParameterType);
+			} else if (info.ParameterType == typeof(string)) {
+				this.val = "";
+			} else if (info.ParameterType == typeof(AnimationCurve)) {
+				this.val = new AnimationCurve();
+			}
+		}
+
 		/// <summary>
 		/// Displays a field for modifying the parameter.
 		/// </summary>
-		public static object DisplayGUI (object param, ParameterInfo info)
+		internal void OnGUI ()
 		{
-			var label = new GUIContent(info.Name, info.ParameterType.Name);
-
 			// Primitives
 			if (info.ParameterType == typeof(int)) {
-				param = EditorGUILayout.IntField(label, (int)param);
+				val = EditorGUILayout.IntField(label, (int)val);
 			} else if (info.ParameterType == typeof(float)) {
-				param = EditorGUILayout.FloatField(label, (float)param);
+				val = EditorGUILayout.FloatField(label, (float)val);
 			} else if (info.ParameterType == typeof(string)) {
-				param = EditorGUILayout.TextField(label, (string)param);
+				val = EditorGUILayout.TextField(label, (string)val);
 			} else if (info.ParameterType == typeof(bool)) {
-				param = EditorGUILayout.Toggle(label, (bool)param);
+				val = EditorGUILayout.Toggle(label, (bool)val);
 			}
 
 			// Unity objects / structs
 			else if (info.ParameterType == typeof(Color)) {
-				param = EditorGUILayout.ColorField(label, (Color)param);
+				val = EditorGUILayout.ColorField(label, (Color)val);
 			} else if (info.ParameterType == typeof(AnimationCurve)) {
-				param = EditorGUILayout.CurveField(label,
-				                                   (AnimationCurve)param);
+				val = EditorGUILayout.CurveField(label, (AnimationCurve)val);
 			} else if (info.ParameterType == typeof(Rect)) {
-				param = EditorGUILayout.RectField(label, (Rect)param);
+				val = EditorGUILayout.RectField(label, (Rect)val);
 			} else if (info.ParameterType == typeof(Vector2)) {
-				param = EditorGUILayout.Vector2Field(info.Name,
-				                                     (Vector2)param);
+				val = EditorGUILayout.Vector2Field(info.Name, (Vector2)val);
 			} else if (info.ParameterType == typeof(Vector3)) {
-				param = EditorGUILayout.Vector3Field(info.Name,
-				                                    (Vector3)param);
+				val = EditorGUILayout.Vector3Field(info.Name, (Vector3)val);
 			} else if (info.ParameterType == typeof(Vector4)) {
-				param = EditorGUILayout.Vector4Field(info.Name,
-				                                     (Vector4)param);
+				val = EditorGUILayout.Vector4Field(info.Name, (Vector4)val);
 			} else if (info.ParameterType.IsEnum) {
 				// Place the enum names into GUIContent labels
 				var enumNames = System.Enum.GetNames(info.ParameterType);
@@ -61,12 +74,12 @@ namespace Methodic
 				}
 
 				var enumValues = System.Enum.GetValues(info.ParameterType);
-				var selected = EditorGUILayout.Popup(label, (int)param, names);
-				param = enumValues.GetValue(selected);
+				var selected = EditorGUILayout.Popup(label, (int)val, names);
+				val = enumValues.GetValue(selected);
 			} else if (typeof(Object).IsAssignableFrom(info.ParameterType)) {
 				// Transform, GameObject, etc.
-				param = EditorGUILayout.ObjectField(label, (Object)param,
-				                                    info.ParameterType, true);
+				val = EditorGUILayout.ObjectField(label, (Object)val,
+				                                  info.ParameterType, true);
 			}
 
 			// Unknown / unsupported
@@ -78,8 +91,6 @@ namespace Methodic
 				              " parameter type unsupported (sends null)";
 				EditorGUILayout.LabelField(info.Name, message);
 			}
-
-			return param;
 		}
 	}
 }

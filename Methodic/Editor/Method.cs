@@ -63,7 +63,7 @@ namespace Methodic
 		public void Invoke ()
 		{
 			try {
-				var result = method.Invoke(component, parameters.parameters);
+				var result = method.Invoke(component, parameters.parametersArray);
 
 				// Display the return value if one is expected
 				if (method.ReturnType != typeof(void)) {
