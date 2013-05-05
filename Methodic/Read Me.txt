@@ -6,7 +6,7 @@ components attached to game objects. This can be used to manually trigger
 events during gameplay or to modify game objects in the editor.
 
 Open the Methodic window by selecting the Window > Methodic menu. For additional
-information on using Methodic, refer to the included Getting Started guide.
+information on using Methodic, go to http://matthewminer.com/methodic.
 
 
 Known Limitations
