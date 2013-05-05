@@ -1,15 +1,12 @@
 //
-// Menus.cs
-//
 // Author: Matthew Miner
 //         matthew@matthewminer.com
-//         http://www.matthewminer.com/
+//         http://matthewminer.com
 //
-// Copyright (c) 2012
+// Copyright (c) 2013
 //
 
 using UnityEditor;
-using UnityEngine;
 
 namespace Methodic
 {
@@ -18,12 +15,11 @@ namespace Methodic
 	/// </summary>
 	static class Menus
 	{
-		[MenuItem ("Window/Methodic %#m")]
+		[MenuItem("Window/Methodic %#m")]
 		static void OpenMethodic ()
 		{
-			// Get existing open window, or make new one if none
-			EditorWindow.GetWindow<MethodicWindow>("Methodic");
+			// Get existing open window, or make new one if there isn't one.
+			EditorWindow.GetWindow<Window>("Methodic");
 		}
 	}
 }
-

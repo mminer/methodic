@@ -1,25 +1,25 @@
 Methodic
 ========
 
-Methodic provides a GUI for executing functions defined in a game object's
-components. This can be used to manually trigger events during gameplay and to
-modify game objects in the editor.
+Methodic provides an editor window for executing functions defined in
+components attached to game objects. This can be used to manually trigger
+events during gameplay or to modify game objects in the editor.
 
 Open the Methodic window by selecting the Window > Methodic menu. For additional
-information on using Methodic please refer to the included Getting Started
-guide.
+information on using Methodic, refer to the included Getting Started guide.
 
 
 Known Limitations
 -----------------
-Currently Methodic does not support array parameters. In such cases a value of
-null is sent when the function in invoked. This happens also when the parameter
-type is unrecognized; say, if it's a class of your own creation.
+Methodic currently lacks support for array parameters. In such cases, a null
+value is sent when the function in invoked. This also happens when the
+parameter type is unrecognized; say, if it's a class of your own creation.
 
 
 Version History
 ---------------
-1.0.2 - March 8, 2012
+1.1 - December 22, 2012
+- Moved preferences to Unity's preferences window.
 - Updated EditorGUILayout.ObjectField() call to remove deprecation warning.
 
 1.0.1 - June 23, 2011
@@ -29,4 +29,3 @@ Version History
 Contact
 -------
 Please send feedback and suggestions to Matthew Miner: matthew@matthewminer.com
-

@@ -1,11 +1,9 @@
 //
-// Preferences.cs
-//
 // Author: Matthew Miner
 //         matthew@matthewminer.com
-//         http://www.matthewminer.com/
+//         http://matthewminer.com
 //
-// Copyright (c) 2012
+// Copyright (c) 2013
 //
 
 using System.Reflection;
@@ -15,40 +13,41 @@ using UnityEngine;
 namespace Methodic
 {
 	/// <summary>
-	/// Options for controlling which methods are shown / available for execution.
+	/// Options for controlling which methods are shown / executable.
 	/// </summary>
-	public static class Preferences
+	static class Preferences
 	{
-		static readonly GUIContent showStaticLabel = new GUIContent(
-				"Show Static",
-				"Show methods beyond those belonging to the instance.");
-
-		static readonly GUIContent showPrivateLabel = new GUIContent(
-				"Show Private",
-				"Show methods unavailable outside the class.");
-
-		static readonly GUIContent displayClassLabel = new GUIContent(
-				"Display Class",
-				"Show the class name beside the method name.");
-
-		const string showStaticKey = "methodic_include_static";
-		const string showPrivateKey = "methodic_include_private";
-		const string displayClassKey = "methodic_display_class";
-
 		internal static bool showStatic { get; private set; }
 		internal static bool showPrivate { get; private set; }
 		internal static bool displayClass { get; private set; }
 
-		const BindingFlags constantFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
-
-		internal static BindingFlags flags {
+		internal static BindingFlags reflectionFlags
+		{
 			get {
-				var _flags = constantFlags;
-				if (showStatic) { _flags |= BindingFlags.Static; }
-				if (showPrivate) { _flags |= BindingFlags.NonPublic; }
-				return _flags;
+				var flags = BindingFlags.Public |
+				            BindingFlags.Instance |
+				            BindingFlags.DeclaredOnly;
+				if (showStatic) { flags |= BindingFlags.Static; }
+				if (showPrivate) { flags |= BindingFlags.NonPublic; }
+				return flags;
 			}
 		}
+
+		// EditorPrefs keys.
+		const string showStaticKey = "methodic_include_static";
+		const string showPrivateKey = "methodic_include_private";
+		const string displayClassKey = "methodic_display_class";
+
+		// Toggle labels.
+		static readonly GUIContent showStaticLabel = new GUIContent(
+			"Show Static",
+			"Show methods beyond those belonging to the instance.");
+		static readonly GUIContent showPrivateLabel = new GUIContent(
+			"Show Private",
+			"Show methods unavailable outside the class.");
+		static readonly GUIContent displayClassLabel = new GUIContent(
+			"Display Class",
+			"Show the class name beside the method name.");
 
 		/// <summary>
 		/// Loads options stored in EditorPrefs.
@@ -60,30 +59,25 @@ namespace Methodic
 			displayClass = EditorPrefs.GetBool(displayClassKey, false);
 		}
 
+		/// <summary>
+		/// Displays preferences GUI.
+		/// </summary>
+		[PreferenceItem("Methodic")]
 		public static void OnGUI ()
 		{
-			// Ignore changes to previous GUI elements
-			GUI.changed = false;
-
-			showStatic = EditorGUILayout.Toggle(showStaticLabel, Preferences.showStatic);
-			showPrivate = EditorGUILayout.Toggle(showPrivateLabel, Preferences.showPrivate);
-			displayClass = EditorGUILayout.Toggle(displayClassLabel, Preferences.displayClass);
+			showStatic = EditorGUILayout.Toggle(showStaticLabel, showStatic);
+			showPrivate = EditorGUILayout.Toggle(showPrivateLabel, showPrivate);
+			displayClass = EditorGUILayout.Toggle(displayClassLabel, displayClass);
 
 			if (GUI.changed) {
-				Save();
-				EditorWindow.GetWindow<MethodicWindow>().OnSelectionChange();
-			}
-		}
+				// Save preferences.
+				EditorPrefs.SetBool(showStaticKey, showStatic);
+				EditorPrefs.SetBool(showPrivateKey, showPrivate);
+				EditorPrefs.SetBool(displayClassKey, displayClass);
 
-		/// <summary>
-		/// Saves options to EditorPrefs for later retrieval.
-		/// </summary>
-		static void Save ()
-		{
-			EditorPrefs.SetBool(showStaticKey, showStatic);
-			EditorPrefs.SetBool(showPrivateKey, showPrivate);
-			EditorPrefs.SetBool(displayClassKey, displayClass);
+				// Update editor window.
+				EditorWindow.GetWindow<Window>().OnSelectionChange();
+			}
 		}
 	}
 }
-

@@ -1,19 +1,22 @@
 //
-// Parameter.cs
-//
 // Author: Matthew Miner
 //         matthew@matthewminer.com
-//         http://www.matthewminer.com/
+//         http://matthewminer.com
 //
-// Copyright (c) 2012
+// Copyright (c) 2013
 //
 
+using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
 namespace Methodic
 {
+	/// <summary>
+	/// Holds parameter information and displays a GUI to change its input
+	/// value.
+	/// </summary>
 	class Parameter
 	{
 		internal object val { get; private set; }
@@ -25,7 +28,7 @@ namespace Methodic
 			this.info = info;
 			this.label = new GUIContent(info.Name, info.ParameterType.Name);
 
-			// Set the parameter to a default value
+			// Set the parameter to a default value.
 			if (info.ParameterType.IsValueType) {
 				this.val = System.Activator.CreateInstance(info.ParameterType);
 			} else if (info.ParameterType == typeof(string)) {
@@ -51,7 +54,7 @@ namespace Methodic
 				val = EditorGUILayout.Toggle(label, (bool)val);
 			}
 
-			// Unity objects / structs
+			// Unity Objects / Structs
 			else if (info.ParameterType == typeof(Color)) {
 				val = EditorGUILayout.ColorField(label, (Color)val);
 			} else if (info.ParameterType == typeof(AnimationCurve)) {
@@ -65,33 +68,24 @@ namespace Methodic
 			} else if (info.ParameterType == typeof(Vector4)) {
 				val = EditorGUILayout.Vector4Field(info.Name, (Vector4)val);
 			} else if (info.ParameterType.IsEnum) {
-				// Place the enum names into GUIContent labels
 				var enumNames = System.Enum.GetNames(info.ParameterType);
-				var names = new GUIContent[enumNames.Length];
-
-				for (int i = 0; i < names.Length; i++) {
-					names[i] = new GUIContent(enumNames[i]);
-				}
-
+				var names = enumNames.Select(n => new GUIContent(n)).ToArray();
 				var enumValues = System.Enum.GetValues(info.ParameterType);
 				var selected = EditorGUILayout.Popup(label, (int)val, names);
 				val = enumValues.GetValue(selected);
 			} else if (typeof(Object).IsAssignableFrom(info.ParameterType)) {
 				// Transform, GameObject, etc.
-				val = EditorGUILayout.ObjectField(label, (Object)val,
-				                                  info.ParameterType, true);
+				val = EditorGUILayout.ObjectField(label, (Object)val, info.ParameterType, true);
 			}
 
-			// Unknown / unsupported
+			// Unknown / Unsupported
 			else if (info.ParameterType.IsArray) {
 				var message = "Array parameter type unsupported (sends null)";
 				EditorGUILayout.LabelField(info.Name, message);
 			} else {
-				var message = label.tooltip +
-				              " parameter type unsupported (sends null)";
+				var message = label.tooltip + " parameter type unsupported (sends null)";
 				EditorGUILayout.LabelField(info.Name, message);
 			}
 		}
 	}
 }
-
