@@ -1,5 +1,3 @@
-# Ignore Mac OS X hidden files.
 .DS_Store
-
-# Ignore Unity scene files.
-*.unity
+AssetStoreTools
+Testing
