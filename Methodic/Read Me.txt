@@ -1,11 +1,10 @@
 Methodic
 ========
 
-Methodic allows functions in your scripts to be executed through a GUI interface
-in Unity. Programmers and level designers alike can use it to quickly test new
-methods and invoke oft-used ones. As a bonus, functions execute both when the
-game is playing and when it's not, allowing routines written specifically for
-batch editor jobs to be easily run. Nice.
+Test and interact with functions through a GUI. An editor window provides a
+simple interface to select your script's functions and running them with
+parameters of your choice. Ideal for manually triggering events during gameplay
+and for modifying game objects in the editor.
 
 
 Getting Started
