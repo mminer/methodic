@@ -55,6 +55,18 @@ namespace Methodic
 				return;
 			}
 
+			// Draw divider.
+			EditorGUILayout.Space();
+
+			var rect = GUILayoutUtility.GetLastRect();
+			var top = rect.yMax - (rect.height / 2) - 1;
+			var start = new Vector3(0, top);
+			var end = new Vector3(rect.width, top);
+
+			Handles.color = Color.grey;
+			Handles.DrawLine(start, end);
+
+			// Show parameters.
 			scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
 
 			foreach (var parameter in parameters) {

@@ -41,13 +41,11 @@ namespace Methodic
 		{
 			GUI.enabled = selectedMethod != null;
 
-			// Toolbar.
-			EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+			EditorGUILayout.BeginHorizontal();
 
-			selectedIndex = EditorGUILayout.Popup(selectedIndex, methodLabels, EditorStyles.toolbarPopup);
-			GUILayout.FlexibleSpace();
+			selectedIndex = EditorGUILayout.Popup(selectedIndex, methodLabels);
 
-			if (GUILayout.Button(invokeLabel, EditorStyles.toolbarButton)) {
+			if (GUILayout.Button(invokeLabel, EditorStyles.miniButton)) {
 				Undo.RegisterSceneUndo(selectedMethod.name + " Call");
 				selectedMethod.Invoke();
 			}
@@ -66,6 +64,7 @@ namespace Methodic
 			methods = DiscoverMethods(Selection.activeGameObject);
 			methodLabels = methods.Select(m => m.GetLabel()).ToArray();
 			selectedIndex = 0;
+			Repaint();
 		}
 
 		/// <summary>
