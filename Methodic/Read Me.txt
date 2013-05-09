@@ -1,16 +1,33 @@
 Methodic
 ========
 
-Methodic provides an editor window for executing functions defined in
-components attached to game objects. This can be used to manually trigger
-events during gameplay or to modify game objects in the editor.
+Methodic allows functions in your scripts to be executed through a GUI interface
+in Unity. Programmers and level designers alike can use it to quickly test new
+methods and invoke oft-used ones. As a bonus, functions execute both when the
+game is playing and when it's not, allowing routines written specifically for
+batch editor jobs to be easily run. Nice.
 
-Open the Methodic window by selecting the Window > Methodic menu. For additional
-information on using Methodic, go to http://matthewminer.com/methodic.
+
+Getting Started
+---------------
+
+Open the Methodic window by selecting the Window > Methodic menu item. If you
+dig hotkeys, use shift-command-m (Mac) or shift-control-m (Windows) instead. I
+like to keep this window docked below or beside the Inspector panel.
+
+Click on a game object with your custom scripts attached. Methodic displays
+the script's functions in a snazzy dropdown. If the selected function accepts
+parameters, they are displayed in editable form below the dropdown.
+
+Once satisfied with the parameter values to send, click the Invoke button to
+run the function. If function returns a value, it is displayed in the Console.
+
+Display options are available in Unity's preferences pane for the adventurous.
 
 
-Known Limitations
------------------
+Limitations
+-----------
+
 Methodic currently lacks support for array parameters. In such cases, a null
 value is sent when the function in invoked. This also happens when the
 parameter type is unrecognized; say, if it's a class of your own creation.
@@ -18,6 +35,12 @@ parameter type is unrecognized; say, if it's a class of your own creation.
 
 Version History
 ---------------
+
+1.1.1 - May 9, 2012
+- Added demo scene.
+- Fixed failed repaint on selection change.
+- Tweaked editor window layout.
+
 1.1 - May 5, 2012
 - Moved preferences to Unity's preferences window.
 - Updated EditorGUILayout.ObjectField() call to remove deprecation warning.
@@ -29,4 +52,5 @@ Version History
 
 Contact
 -------
-Please send feedback and suggestions to Matthew Miner: matthew@matthewminer.com
+
+Questions or suggestions? Please contact me at matthew@matthewminer.com.
