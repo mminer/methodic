@@ -23,17 +23,47 @@
       <section>
         <h3>Function Invocation Made Easy</h3>
 
-		<p>Methodic allows functions in your scripts to be executed through a GUI interface in <a href="http://unity3d.com/">Unity</a>. Programmers and level designers alike can use it to quickly test new methods and invoke oft-used ones. As a bonus, functions execute both when the game is playing and when it's not, allowing routines written specifically for batch editor jobs to be easily run. Nice.</p>
+		<p>Test and interact with functions through a GUI. An editor window provides a simple interface to select your script&rsquo;s functions and running them with parameters of your choice. Ideal for manually triggering events during gameplay and for modifying game objects in the editor.</p>
+
 
 		<h3>Getting Started</h3>
 
-		<p>After importing the Methodic package, open the editor window by selecting the <em>Window &rarr; Methodic</em> menu item. If hotkeys are how you roll, use <em>shift-command-m</em> (Mac) or <em>shift-control-m</em> (Windows) instead.</p>
-		<p>Dock this window wherever you please. I like to keep it below or beside the Inspector panel.</p>
-		<p>Now click on a game object that has your custom scripts attached. Methodic displays the functions available in a snazzy dropdown box.</p>
-		<p>If the selected function accepts parameters, these are displayed in editable form below the dropdown box.</p>
-		<p>Once satisfied with the parameters to send, click the <em>Invoke</em> button to execute the function. If function returns something, this result is displayed in the Console.</p>
-		<p>Should you have any questions, please contact me at <a href="mailto:matthew@matthewminer.com">matthew@matthewminer.com</a>.</p>
+		<p>Open the Methodic window by selecting the <em>Window &rarr; Methodic</em> menu item. If you dig hotkeys, use <em>shift-command-m</em>(Mac) or <em>shift-control-m</em> (Windows) instead. I like to keep this window docked below or beside the Inspector panel.</p>
+		<p>Click on a game object with your custom scripts attached. Methodic displays the script&rsquo;s functions in a snazzy dropdown. If the selected function accepts parameters, they are displayed in editable form below the dropdown.</p>
+		<p>Once satisfied with the parameter values to send, click the Invoke button to run the function. If function returns a value, it is displayed in the Console.</p>
+		<p>Display options are available in Unity&rsquo;s preferences pane for the adventurous.</p>
 
+
+		<h3>Limitations</h3>
+
+		<p>Methodic currently lacks support for array parameters. In such cases, a <code>null</code> value is sent when the function in invoked. This also happens when the parameter type is unrecognized; say, if it&rsquo;s a class of your own creation.</p>
+
+
+		<h3>Version History</h3>
+
+		<p>1.1.1 &mdash; May 9, 2012</p>
+		<ul>
+			<li>Added demo scene.</li>
+			<li>Fixed failed repaint on selection change.</li>
+			<li>Tweaked editor window layout.</li>
+		</ul>
+
+		<p>1.1 &mdash; May 5, 2012</p>
+		<ul>
+			<li>Moved preferences to Unity's preferences window.</li>
+			<li>Updated EditorGUILayout.ObjectField() call to remove deprecation warning.</li>
+			<li>Namespaced editor window; this change drops support for Unity 3.</li>
+		</ul>
+
+		<p>1.0.1 &mdash; June 23, 2011</p>
+		<ul>
+			<li>Initial release.</li>
+		</ul>
+
+
+		<h3>Contact</h3>
+
+		<p>Questions or suggestions? Please contact me at <a href="matthew@matthewminer.com">matthew@matthewminer.com</a>.</p>
       </section>
     </div>
     <script src="javascripts/scale.fix.js"></script>
