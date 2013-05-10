@@ -2,9 +2,9 @@ Methodic
 ========
 
 Test and interact with functions through a GUI. An editor window provides a
-simple interface to select your script's functions and running them with
-parameters of your choice. Ideal for manually triggering events during gameplay
-and for modifying game objects in the editor.
+simple interface to select your script's functions and run them with parameters
+of your choice. Ideal for manually triggering events during gameplay and for
+modifying game objects in the editor.
 
 
 Getting Started
