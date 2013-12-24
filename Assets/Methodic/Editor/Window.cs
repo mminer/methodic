@@ -18,9 +18,7 @@ namespace Methodic
 	/// </summary>
 	class Window : EditorWindow
 	{
-		static readonly GUIContent invokeLabel = new GUIContent(
-			"Invoke",
-			"Execute this method.");
+		static readonly GUIContent invokeLabel = new GUIContent("Invoke", "Execute this method.");
 
 		Method[] methods = {};
 		GUIContent[] methodLabels = {};
@@ -37,7 +35,7 @@ namespace Methodic
 			}
 		}
 
-		public void OnGUI ()
+		void OnGUI ()
 		{
 			GUI.enabled = selectedMethod != null;
 
@@ -46,7 +44,8 @@ namespace Methodic
 			selectedIndex = EditorGUILayout.Popup(selectedIndex, methodLabels);
 
 			if (GUILayout.Button(invokeLabel, EditorStyles.miniButton)) {
-				Undo.RegisterSceneUndo(selectedMethod.name + " Call");
+				var undoLabel = selectedMethod.name + " Call";
+				Undo.RecordObject(Selection.activeGameObject, undoLabel);
 				selectedMethod.Invoke();
 			}
 
@@ -59,7 +58,7 @@ namespace Methodic
 			GUI.enabled = true;
 		}
 
-		public void OnSelectionChange ()
+		internal void OnSelectionChange ()
 		{
 			methods = DiscoverMethods(Selection.activeGameObject);
 			methodLabels = methods.Select(m => m.GetLabel()).ToArray();
@@ -79,12 +78,10 @@ namespace Methodic
 				var components = target.GetComponents<MonoBehaviour>();
 
 				foreach (var component in components) {
-					var componentMethods = component.GetType().GetMethods(Preferences.reflectionFlags);
-
-					foreach (var info in componentMethods) {
-						var method = new Method(component, info);
-						methods.Add(method);
-					}
+					var componentMethods = component.GetType()
+					                                .GetMethods(Preferences.reflectionFlags)
+					                                .Select(info => new Method(component, info));
+					methods.AddRange(componentMethods);
 				}
 			}
 
