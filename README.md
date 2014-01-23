@@ -1,7 +1,7 @@
-Methodic is an editor extension for [Unity](http://unity3d.com/) (the game
-engine) allowing a component's methods to be triggered manually from a GUI.
-This makes it easy to test code in the editor and during gameplay.
+Methodic is an editor extension for Unity (the
+[game engine](http://unity3d.com/)) allowing a component's methods to be
+triggered manually from a handy GUI window. This makes it easy to test code in
+the editor and during gameplay.
 
-The package can be purchased and downloaded from the
-[Unity Asset Store](http://u3d.as/content/matthew-miner/methodic/1Xw). If
-you're short on cash feel welcome to grab the code directly from here.
+A package can be purchased and downloaded from the
+[Unity Asset Store](http://u3d.as/content/matthew-miner/methodic/1Xw).
