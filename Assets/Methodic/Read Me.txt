@@ -37,7 +37,7 @@ parameter type is unrecognized; say, if it's a class of your own creation.
 Version History
 ---------------
 
-1.1.2 - December 24, 2013
+1.1.2 - January 2, 2014
 - Replace deprecated UnityEngine.Undo function use.
 
 1.1.1 - May 9, 2012
