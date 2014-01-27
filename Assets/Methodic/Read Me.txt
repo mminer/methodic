@@ -6,8 +6,6 @@ simple interface to select your script's functions and run them with parameters
 of your choice. Ideal for manually triggering events during gameplay and for
 modifying game objects in the editor.
 
-Version 1.1.2
-
 
 Getting Started
 ---------------
@@ -36,6 +34,9 @@ parameter type is unrecognized; say, if it's a class of your own creation.
 
 Version History
 ---------------
+
+1.2 - January 27, 2014
+- Split components into separate dropdown.
 
 1.1.2 - December 24, 2013
 - Replace deprecated UnityEngine.Undo function use.
