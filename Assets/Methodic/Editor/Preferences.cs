@@ -21,7 +21,7 @@ namespace Methodic
 		internal static bool showPrivate { get; private set; }
 		internal static bool displayClass { get; private set; }
 
-		internal static BindingFlags reflectionFlags
+		internal static BindingFlags reflectionOptions
 		{
 			get {
 				var flags = BindingFlags.Public |
@@ -63,7 +63,7 @@ namespace Methodic
 		/// Displays preferences GUI.
 		/// </summary>
 		[PreferenceItem("Methodic")]
-		public static void OnGUI ()
+		static void OnGUI ()
 		{
 			showStatic = EditorGUILayout.Toggle(showStaticLabel, showStatic);
 			showPrivate = EditorGUILayout.Toggle(showPrivateLabel, showPrivate);
@@ -76,7 +76,9 @@ namespace Methodic
 				EditorPrefs.SetBool(displayClassKey, displayClass);
 
 				// Update editor window.
-				EditorWindow.GetWindow<Window>().OnSelectionChange();
+				if (Window.isOpen) {
+					EditorWindow.GetWindow<Window>(null, false).Refresh();
+				}
 			}
 		}
 	}

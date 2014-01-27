@@ -6,8 +6,6 @@
 // Copyright (c) 2013
 //
 
-using System.Collections.Generic;
-using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -18,74 +16,69 @@ namespace Methodic
 	/// </summary>
 	class Window : EditorWindow
 	{
+		internal static bool isOpen { get; private set; }
+
+		const string noSelectionMessage = "Select a game object in the Hierarchy to list its methods.";
+		const string noMethodsMessage = "Components attached to the selected game object contain no methods of the desired type.";
 		static readonly GUIContent invokeLabel = new GUIContent("Invoke", "Execute this method.");
 
-		Method[] methods = {};
-		GUIContent[] methodLabels = {};
+		Method[] methods;
+		GUIContent[] methodLabels;
 		int selectedIndex;
 
-		Method selectedMethod
+		/// <summary>
+		/// Resets the methods and labels to the selected game object's.
+		/// </summary>
+		internal void Refresh ()
 		{
-			get {
-				if (selectedIndex >= 0 && selectedIndex < methods.Length) {
-					return methods[selectedIndex];
-				} else {
-					return null;
-				}
-			}
+			methods = MethodFinder.GetMethods(Selection.activeGameObject);
+			methodLabels = MethodFinder.GetMethodLabels(methods);
+			selectedIndex = 0;
+			Repaint();
 		}
 
 		void OnGUI ()
 		{
-			GUI.enabled = selectedMethod != null;
+			if (methods == null) {
+				EditorGUILayout.HelpBox(noSelectionMessage, MessageType.Info);
+				return;
+			}
+
+			if (methods.Length == 0) {
+				EditorGUILayout.HelpBox(noMethodsMessage, MessageType.Warning);
+				return;
+			}
 
 			EditorGUILayout.BeginHorizontal();
 
 			selectedIndex = EditorGUILayout.Popup(selectedIndex, methodLabels);
+			var selectedMethod = methods[selectedIndex];
 
 			if (GUILayout.Button(invokeLabel, EditorStyles.miniButton)) {
-				var undoLabel = selectedMethod.name + " Call";
+				var undoLabel = string.Format("{0} Call", selectedMethod.name);
 				Undo.RecordObject(Selection.activeGameObject, undoLabel);
 				selectedMethod.Invoke();
 			}
 
 			EditorGUILayout.EndHorizontal();
 
-			if (selectedMethod != null) {
-				selectedMethod.OnGUI();
-			}
-
-			GUI.enabled = true;
+			selectedMethod.OnGUI();
 		}
 
-		internal void OnSelectionChange ()
+		void OnSelectionChange ()
 		{
-			methods = DiscoverMethods(Selection.activeGameObject);
-			methodLabels = methods.Select(m => m.GetLabel()).ToArray();
-			selectedIndex = 0;
-			Repaint();
+			Refresh();
 		}
 
-		/// <summary>
-		/// Discovers the specified game object's methods.
-		/// </summary>
-		static Method[] DiscoverMethods (GameObject target)
+		void OnEnable ()
 		{
-			var methods = new List<Method>();
+			isOpen = true;
+			Refresh();
+		}
 
-			if (target != null) {
-				// Discover methods in attached components.
-				var components = target.GetComponents<MonoBehaviour>();
-
-				foreach (var component in components) {
-					var componentMethods = component.GetType()
-					                                .GetMethods(Preferences.reflectionFlags)
-					                                .Select(info => new Method(component, info));
-					methods.AddRange(componentMethods);
-				}
-			}
-
-			return methods.ToArray();
+		void OnDisable ()
+		{
+			isOpen = false;
 		}
 	}
 }
