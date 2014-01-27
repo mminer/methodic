@@ -3,7 +3,7 @@
 //         matthew@matthewminer.com
 //         http://matthewminer.com
 //
-// Copyright (c) 2013
+// Copyright (c) 2014
 //
 
 using System.Reflection;
