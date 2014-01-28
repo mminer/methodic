@@ -26,6 +26,7 @@ namespace Methodic
 
 		const string noSelectionMessage = "Select a game object in the Hierarchy to list its methods.";
 		const string noMethodsMessage = "Components attached to the selected game object contain no methods of the desired type.";
+		static readonly GUIContent lockLabel = new GUIContent("Lock", "Lock Methodic to the currently selected game object.");
 		static readonly GUIContent invokeLabel = new GUIContent("Invoke", "Execute this method.");
 
 		MonoBehaviour[] components;
@@ -42,6 +43,19 @@ namespace Methodic
 		string[] componentLabels;
 		string[] methodLabels;
 
+		GameObject _activeGameObject;
+		GameObject activeGameObject
+		{
+			get {
+				if (!lockedToGameObject || _activeGameObject == null) {
+					_activeGameObject = Selection.activeGameObject;
+				}
+
+				return _activeGameObject;
+			}
+		}
+
+		bool lockedToGameObject;
 		Vector2 scrollPosition;
 
 		/// <summary>
@@ -60,7 +74,7 @@ namespace Methodic
 		/// </summary>
 		void RefreshComponents ()
 		{
-			components = Reflector.GetComponents(Selection.activeGameObject);
+			components = Reflector.GetComponents(activeGameObject);
 			componentIndex = 0;
 
 			if (components == null || components.Length == 0) {
@@ -100,6 +114,19 @@ namespace Methodic
 
 		void OnGUI ()
 		{
+			EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+
+				GUILayout.FlexibleSpace();
+				lockedToGameObject = GUILayout.Toggle(lockedToGameObject, lockLabel, EditorStyles.toolbarButton);
+
+				OnGUIChanged(delegate {
+					RefreshComponents();
+					RefreshMethods();
+					RefreshParameters();
+				});
+
+			EditorGUILayout.EndHorizontal();
+
 			scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
 
 			if (components == null) {
@@ -110,19 +137,19 @@ namespace Methodic
 				componentIndex = EditorGUILayout.Popup("Component", componentIndex, componentLabels);
 
 				// Update selected component if a different one has been chosen.
-				if (selectedComponent != components[componentIndex]) {
+				OnGUIChanged(delegate {
 					selectedComponent = components[componentIndex];
 					RefreshMethods();
 					RefreshParameters();
-				}
+				});
 
 				methodIndex = EditorGUILayout.Popup("Method", methodIndex, methodLabels);
 
 				// Update selected method if a different one has been chosen.
-				if (selectedMethod != methods[methodIndex]) {
+				OnGUIChanged(delegate {
 					selectedMethod = methods[methodIndex];
 					RefreshParameters();
-				}
+				});
 
 				// Display list of parameters.
 				if (parameters.Length > 0) {
@@ -141,7 +168,7 @@ namespace Methodic
 
 			if (GUILayout.Button(invokeLabel)) {
 				var undoLabel = string.Format("{0} Call", selectedComponent.name);
-				Undo.RecordObject(Selection.activeGameObject, undoLabel);
+				Undo.RecordObject(activeGameObject, undoLabel);
 				Reflector.InvokeMethod(selectedComponent, selectedMethod, parameterValues);
 			}
 		}
@@ -225,6 +252,14 @@ namespace Methodic
 			}
 
 			return newValue;
+		}
+
+		static void OnGUIChanged (Action action)
+		{
+			if (GUI.changed) {
+				action();
+				GUI.changed = true;
+			}
 		}
 	}
 }
