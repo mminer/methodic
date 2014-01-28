@@ -120,9 +120,11 @@ namespace Methodic
 				lockedToGameObject = GUILayout.Toggle(lockedToGameObject, lockLabel, EditorStyles.toolbarButton);
 
 				OnGUIChanged(delegate {
-					RefreshComponents();
-					RefreshMethods();
-					RefreshParameters();
+					if (!lockedToGameObject) {
+						RefreshComponents();
+						RefreshMethods();
+						RefreshParameters();
+					}
 				});
 
 			EditorGUILayout.EndHorizontal();
@@ -175,7 +177,9 @@ namespace Methodic
 
 		void OnSelectionChange ()
 		{
-			Refresh();
+			if (!lockedToGameObject) {
+				Refresh();
+			}
 		}
 
 		void OnEnable ()
