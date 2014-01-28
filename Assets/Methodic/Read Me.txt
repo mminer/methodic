@@ -37,6 +37,7 @@ Version History
 
 1.2 - January 27, 2014
 - Split components into separate dropdown.
+- Add option to lock onto a selected game object.
 
 1.1.2 - December 24, 2013
 - Replace deprecated UnityEngine.Undo function use.
