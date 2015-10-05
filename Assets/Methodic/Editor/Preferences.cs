@@ -26,8 +26,15 @@ namespace Methodic
 				var flags = BindingFlags.Public |
 				            BindingFlags.Instance |
 				            BindingFlags.DeclaredOnly;
-				if (showStatic) { flags |= BindingFlags.Static; }
-				if (showPrivate) { flags |= BindingFlags.NonPublic; }
+
+				if (showStatic) {
+					flags |= BindingFlags.Static;
+				}
+
+				if (showPrivate) {
+					flags |= BindingFlags.NonPublic;
+				}
+
 				return flags;
 			}
 		}
@@ -59,15 +66,31 @@ namespace Methodic
 			showPrivate = EditorGUILayout.Toggle(showPrivateLabel, showPrivate);
 
 			if (GUI.changed) {
-				// Save preferences.
-				EditorPrefs.SetBool(showStaticKey, showStatic);
-				EditorPrefs.SetBool(showPrivateKey, showPrivate);
-
-				// Update editor window.
-				if (Window.isOpen) {
-					EditorWindow.GetWindow<Window>(null, false).Refresh();
-				}
+				SavePreferences();
+				RefreshEditorWindow();
 			}
+		}
+
+		/// <summary>
+		/// Saves the preferences to disk.
+		/// </summary>
+		static void SavePreferences ()
+		{
+			EditorPrefs.SetBool(showStaticKey, showStatic);
+			EditorPrefs.SetBool(showPrivateKey, showPrivate);
+		}
+
+		/// <summary>
+		/// Tells the editor window to update.
+		/// </summary>
+		static void RefreshEditorWindow ()
+		{
+			if (!Window.isOpen) {
+				return;
+			}
+
+			var window = EditorWindow.GetWindow<Window>("Methodic", false);
+			window.Refresh();
 		}
 	}
 }

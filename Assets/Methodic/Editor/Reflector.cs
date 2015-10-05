@@ -42,12 +42,12 @@ namespace Methodic
 		/// Finds scripts attached to the given game object.
 		/// Only ones containing methods are returned.
 		/// </summary>
-		/// <param name="target">Target game object.</param>
+		/// <param name="gameObject">Target game object.</param>
 		/// <returns>Component array.</returns>
 		internal static MonoBehaviour[] GetComponents (GameObject gameObject)
 		{
 			if (gameObject == null) {
-				return null;
+				return new MonoBehaviour[] {};
 			}
 
 			var components = gameObject
@@ -62,6 +62,24 @@ namespace Methodic
 		}
 
 		/// <summary>
+		/// Gets an array of component labels for display in a GUI dropdown.
+		/// </summary>
+		/// <param name="methods">Components to get labels for.</param>
+		/// <returns>Labels array.</returns>
+		internal static string[] GetComponentLabels (MonoBehaviour[] components)
+		{
+			if (components == null) {
+				return new string[] {};
+			}
+
+			var labels = components
+				.Select(component => component.GetType().Name)
+				.ToArray();
+
+			return labels;
+		}
+
+		/// <summary>
 		/// Finds methods contained in the given component.
 		/// </summary>
 		/// <param name="component">Target component.</param>
@@ -69,7 +87,7 @@ namespace Methodic
 		internal static MethodInfo[] GetMethods (MonoBehaviour component)
 		{
 			if (component == null) {
-				return null;
+				return new MethodInfo[] {};
 			}
 
 			var methods = component
@@ -81,6 +99,24 @@ namespace Methodic
 		}
 
 		/// <summary>
+		/// Gets an array of method labels for display in a GUI dropdown.
+		/// </summary>
+		/// <param name="methods">Methods to get labels for.</param>
+		/// <returns>Labels array.</returns>
+		internal static string[] GetMethodLabels (MethodInfo[] methods)
+		{
+			if (methods == null) {
+				return new string[] {};
+			}
+
+			var labels = methods
+				.Select(method => method.Name)
+				.ToArray();
+
+			return labels;
+		}
+
+		/// <summary>
 		/// Finds parameters that can be provided to the given method.
 		/// </summary>
 		/// <param name="method">Target method.</param>
@@ -88,7 +124,7 @@ namespace Methodic
 		internal static ParameterInfo[] GetParameters (MethodInfo method)
 		{
 			if (method == null) {
-				return null;
+				return new ParameterInfo[] {};
 			}
 
 			var parameters = method
@@ -106,7 +142,7 @@ namespace Methodic
 		internal static object[] GetDefaultParameterValues (ParameterInfo[] parameters)
 		{
 			if (parameters == null) {
-				return null;
+				return new object[] {};
 			}
 
 			var values = parameters
@@ -117,42 +153,6 @@ namespace Methodic
 		}
 
 		/// <summary>
-		/// Gets an array of component labels for display in a GUI dropdown.
-		/// </summary>
-		/// <param name="methods">Components to get labels for.</param>
-		/// <returns>Labels array.</returns>
-		internal static string[] GetComponentLabels (MonoBehaviour[] components)
-		{
-			if (components == null) {
-				return null;
-			}
-
-			var labels = components
-				.Select(component => component.GetType().Name)
-				.ToArray();
-
-			return labels;
-		}
-
-		/// <summary>
-		/// Gets an array of method labels for display in a GUI dropdown.
-		/// </summary>
-		/// <param name="methods">Methods to get labels for.</param>
-		/// <returns>Labels array.</returns>
-		internal static string[] GetMethodLabels (MethodInfo[] methods)
-		{
-			if (methods == null) {
-				return null;
-			}
-
-			var labels = methods
-				.Select(method => method.Name)
-				.ToArray();
-
-			return labels;
-		}
-
-		/// <summary>
 		/// Gets the default value for the given parameter.
 		/// This will vary depending on the parameter's type.
 		/// </summary>
@@ -160,7 +160,7 @@ namespace Methodic
 		/// <returns>Default value.</returns>
 		static object GetDefaultParameterValue (ParameterInfo parameter)
 		{
-			object defaultValue;
+			object defaultValue = null;
 
 			if (parameter.ParameterType.IsValueType) {
 				defaultValue = Activator.CreateInstance(parameter.ParameterType);
@@ -168,8 +168,6 @@ namespace Methodic
 				defaultValue = "";
 			} else if (parameter.ParameterType == typeof(AnimationCurve)) {
 				defaultValue = new AnimationCurve();
-			} else {
-				defaultValue = null;
 			}
 
 			return defaultValue;

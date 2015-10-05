@@ -29,29 +29,40 @@ namespace Methodic
 		static readonly GUIContent lockLabel = new GUIContent("Lock", "Lock Methodic to the currently selected game object.");
 		static readonly GUIContent invokeLabel = new GUIContent("Invoke", "Execute this method.");
 
-		MonoBehaviour[] components;
-		MethodInfo[] methods;
-		ParameterInfo[] parameters;
-		object[] parameterValues;
-
 		int componentIndex;
 		int methodIndex;
 
-		MonoBehaviour selectedComponent;
-		MethodInfo selectedMethod;
-
-		string[] componentLabels;
-		string[] methodLabels;
-
-		GameObject _activeGameObject;
-		GameObject activeGameObject
+		GameObject _selectedGameObject;
+		GameObject selectedGameObject
 		{
 			get {
-				if (!lockedToGameObject || _activeGameObject == null) {
-					_activeGameObject = Selection.activeGameObject;
+				if (!lockedToGameObject || _selectedGameObject == null) {
+					_selectedGameObject = Selection.activeGameObject;
 				}
 
-				return _activeGameObject;
+				return _selectedGameObject;
+			}
+		}
+
+		MonoBehaviour selectedComponent
+		{
+			get {
+				if (TargetInfo.components.Length == 0) {
+					return null;
+				}
+
+				return TargetInfo.components[componentIndex];
+			}
+		}
+
+		MethodInfo selectedMethod
+		{
+			get {
+				if (TargetInfo.methods.Length == 0) {
+					return null;
+				}
+
+				return TargetInfo.methods[methodIndex];
 			}
 		}
 
@@ -74,16 +85,8 @@ namespace Methodic
 		/// </summary>
 		void RefreshComponents ()
 		{
-			components = Reflector.GetComponents(activeGameObject);
+			TargetInfo.SetSelectedGameObject(selectedGameObject);
 			componentIndex = 0;
-
-			if (components == null || components.Length == 0) {
-				selectedComponent = null;
-			} else {
-				selectedComponent = components[componentIndex];
-			}
-
-			componentLabels = Reflector.GetComponentLabels(components);
 		}
 
 		/// <summary>
@@ -91,16 +94,8 @@ namespace Methodic
 		/// </summary>
 		void RefreshMethods ()
 		{
-			methods = Reflector.GetMethods(selectedComponent);
+			TargetInfo.SetSelectedComponent(selectedComponent);
 			methodIndex = 0;
-
-			if (methods == null || methods.Length == 0) {
-				selectedMethod = null;
-			} else {
-				selectedMethod = methods[methodIndex];
-			}
-
-			methodLabels = Reflector.GetMethodLabels(methods);
 		}
 
 		/// <summary>
@@ -108,78 +103,16 @@ namespace Methodic
 		/// </summary>
 		void RefreshParameters ()
 		{
-			parameters = Reflector.GetParameters(selectedMethod);
-			parameterValues = Reflector.GetDefaultParameterValues(parameters);
-		}
-
-		void OnGUI ()
-		{
-			EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-
-				GUILayout.FlexibleSpace();
-				lockedToGameObject = GUILayout.Toggle(lockedToGameObject, lockLabel, EditorStyles.toolbarButton);
-
-				OnGUIChanged(delegate {
-					if (!lockedToGameObject) {
-						RefreshComponents();
-						RefreshMethods();
-						RefreshParameters();
-					}
-				});
-
-			EditorGUILayout.EndHorizontal();
-
-			scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
-
-			if (components == null) {
-				EditorGUILayout.HelpBox(noSelectionMessage, MessageType.Info);
-			} else if (components.Length == 0) {
-				EditorGUILayout.HelpBox(noMethodsMessage, MessageType.Warning);
-			} else {
-				componentIndex = EditorGUILayout.Popup("Component", componentIndex, componentLabels);
-
-				// Update selected component if a different one has been chosen.
-				OnGUIChanged(delegate {
-					selectedComponent = components[componentIndex];
-					RefreshMethods();
-					RefreshParameters();
-				});
-
-				methodIndex = EditorGUILayout.Popup("Method", methodIndex, methodLabels);
-
-				// Update selected method if a different one has been chosen.
-				OnGUIChanged(delegate {
-					selectedMethod = methods[methodIndex];
-					RefreshParameters();
-				});
-
-				// Display list of parameters.
-				if (parameters.Length > 0) {
-					GUILayout.Label("Parameters");
-					EditorGUI.indentLevel = 1;
-
-					for (int i = 0; i < parameters.Length; i++) {
-						parameterValues[i] = ParameterGUIField(parameters[i], parameterValues[i]);
-					}
-				}
-			}
-
-			EditorGUILayout.EndScrollView();
-
-			GUI.enabled = components != null;
-
-			if (GUILayout.Button(invokeLabel)) {
-				var undoLabel = string.Format("{0} Call", selectedComponent.name);
-				Undo.RecordObject(activeGameObject, undoLabel);
-				Reflector.InvokeMethod(selectedComponent, selectedMethod, parameterValues);
-			}
+			TargetInfo.SetSelectedMethod(selectedMethod);
 		}
 
 		void OnSelectionChange ()
 		{
-			if (!lockedToGameObject) {
-				Refresh();
+			if (lockedToGameObject) {
+				return;
 			}
+
+			Refresh();
 		}
 
 		void OnEnable ()
@@ -193,6 +126,82 @@ namespace Methodic
 			isOpen = false;
 		}
 
+		void OnGUI ()
+		{
+			DrawToolbar();
+			DrawParametersForm();
+			DrawInvokeButton();
+		}
+
+		void DrawToolbar ()
+		{
+			EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+
+				GUILayout.FlexibleSpace();
+				lockedToGameObject = GUILayout.Toggle(lockedToGameObject, lockLabel, EditorStyles.toolbarButton);
+
+				OnGUIChanged(() => {
+					if (lockedToGameObject) {
+						return;
+					}
+
+					RefreshComponents();
+					RefreshMethods();
+					RefreshParameters();
+				});
+
+			EditorGUILayout.EndHorizontal();
+		}
+
+		void DrawParametersForm ()
+		{
+			scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
+
+			if (selectedGameObject == null) {
+				EditorGUILayout.HelpBox(noSelectionMessage, MessageType.Info);
+			} else if (TargetInfo.components.Length == 0) {
+				EditorGUILayout.HelpBox(noMethodsMessage, MessageType.Warning);
+			} else {
+				componentIndex = EditorGUILayout.Popup("Component", componentIndex, TargetInfo.componentLabels);
+
+				// Update selected component if a different one has been chosen.
+				OnGUIChanged(() => {
+					RefreshMethods();
+					RefreshParameters();
+				});
+
+				methodIndex = EditorGUILayout.Popup("Method", methodIndex, TargetInfo.methodLabels);
+
+				// Update selected method if a different one has been chosen.
+				OnGUIChanged(() => {
+					RefreshParameters();
+				});
+
+				// Display list of parameters.
+				if (TargetInfo.parameters.Length > 0) {
+					GUILayout.Label("Parameters");
+					EditorGUI.indentLevel = 1;
+
+					for (int i = 0; i < TargetInfo.parameters.Length; i++) {
+						TargetInfo.parameterValues[i] = ParameterGUIField(TargetInfo.parameters[i], TargetInfo.parameterValues[i]);
+					}
+				}
+			}
+
+			EditorGUILayout.EndScrollView();
+		}
+
+		void DrawInvokeButton ()
+		{
+			GUI.enabled = selectedGameObject != null;
+
+			if (GUILayout.Button(invokeLabel)) {
+				var undoLabel = string.Format("{0} Call", selectedComponent.name);
+				Undo.RecordObject(selectedGameObject, undoLabel);
+				Reflector.InvokeMethod(selectedComponent, selectedMethod, TargetInfo.parameterValues);
+			}
+		}
+
 		/// <summary>
 		/// Editor GUI field for a parameter.
 		/// Specific EditorGUILayout function used depends on parameter type.
@@ -200,7 +209,7 @@ namespace Methodic
 		/// <param name="parameter">Parameter info.</param>
 		/// <param name="parameterValue">Current value of parameter field.</param>
 		/// <returns>New value for parameter.</returns>
-		static object ParameterGUIField (ParameterInfo parameter, object parameterValue)
+		object ParameterGUIField (ParameterInfo parameter, object parameterValue)
 		{
 			var parameterType = parameter.ParameterType;
 			var label = new GUIContent(parameter.Name, parameterType.Name);
@@ -258,12 +267,14 @@ namespace Methodic
 			return newValue;
 		}
 
-		static void OnGUIChanged (Action action)
+		void OnGUIChanged (Action action)
 		{
-			if (GUI.changed) {
-				action();
-				GUI.changed = true;
+			if (!GUI.changed) {
+				return;
 			}
+
+			action();
+			GUI.changed = true;
 		}
 	}
 }
