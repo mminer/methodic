@@ -3,9 +3,10 @@
 //         matthew@matthewminer.com
 //         http://matthewminer.com
 //
-// Copyright (c) 2015
+// Copyright (c) 2016
 //
 
+using System;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
@@ -17,43 +18,52 @@ namespace Methodic
 	/// </summary>
 	static class Preferences
 	{
-		static bool showStatic;
-		static bool showPrivate;
+		internal static event Action OnPreferencesChange;
 
 		internal static BindingFlags reflectionOptions
 		{
 			get {
-				var flags = BindingFlags.Public |
-				            BindingFlags.Instance |
-				            BindingFlags.DeclaredOnly;
-
-				if (showStatic) {
-					flags |= BindingFlags.Static;
-				}
+				var flags = standardRelectionOptions;
 
 				if (showPrivate) {
 					flags |= BindingFlags.NonPublic;
+				}
+
+				if (showStatic) {
+					flags |= BindingFlags.Static;
 				}
 
 				return flags;
 			}
 		}
 
+		static bool showPrivate;
+		static bool showStatic;
+
+		const BindingFlags standardRelectionOptions =
+			BindingFlags.DeclaredOnly |
+			BindingFlags.Instance |
+			BindingFlags.Public;
+
 		// EditorPrefs keys.
-		const string showStaticKey = "methodic_include_static";
 		const string showPrivateKey = "methodic_include_private";
+		const string showStaticKey = "methodic_include_static";
 
-		// Toggle labels.
-		static readonly GUIContent showStaticLabel = new GUIContent("Show Static", "Show methods beyond those belonging to the instance.");
-		static readonly GUIContent showPrivateLabel = new GUIContent("Show Private", "Show methods unavailable outside the class.");
+		// Toggle labels:
 
-		/// <summary>
-		/// Loads options stored in EditorPrefs.
-		/// </summary>
+		static readonly GUIContent showPrivateLabel = new GUIContent(
+			"Show Private",
+			"Show methods unavailable outside the class."
+		);
+
+		static readonly GUIContent showStaticLabel = new GUIContent(
+			"Show Static",
+			"Show methods beyond those belonging to the instance."
+		);
+
 		static Preferences ()
 		{
-			showStatic = EditorPrefs.GetBool(showStaticKey, true);
-			showPrivate = EditorPrefs.GetBool(showPrivateKey, true);
+			LoadPreferences();
 		}
 
 		/// <summary>
@@ -62,13 +72,25 @@ namespace Methodic
 		[PreferenceItem("Methodic")]
 		static void OnGUI ()
 		{
-			showStatic = EditorGUILayout.Toggle(showStaticLabel, showStatic);
 			showPrivate = EditorGUILayout.Toggle(showPrivateLabel, showPrivate);
+			showStatic = EditorGUILayout.Toggle(showStaticLabel, showStatic);
 
 			if (GUI.changed) {
 				SavePreferences();
-				RefreshEditorWindow();
+
+				if (OnPreferencesChange != null) {
+					OnPreferencesChange();
+				}
 			}
+		}
+
+		/// <summary>
+		/// Reads the preferences from disk.
+		/// </summary>
+		static void LoadPreferences ()
+		{
+			showPrivate = EditorPrefs.GetBool(showPrivateKey, true);
+			showStatic = EditorPrefs.GetBool(showStaticKey, true);
 		}
 
 		/// <summary>
@@ -76,21 +98,8 @@ namespace Methodic
 		/// </summary>
 		static void SavePreferences ()
 		{
-			EditorPrefs.SetBool(showStaticKey, showStatic);
 			EditorPrefs.SetBool(showPrivateKey, showPrivate);
-		}
-
-		/// <summary>
-		/// Tells the editor window to update.
-		/// </summary>
-		static void RefreshEditorWindow ()
-		{
-			if (!Window.isOpen) {
-				return;
-			}
-
-			var window = EditorWindow.GetWindow<Window>("Methodic", false);
-			window.Refresh();
+			EditorPrefs.SetBool(showStaticKey, showStatic);
 		}
 	}
 }

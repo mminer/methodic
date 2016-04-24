@@ -3,7 +3,7 @@
 //         matthew@matthewminer.com
 //         http://matthewminer.com
 //
-// Copyright (c) 2015
+// Copyright (c) 2016
 //
 
 using System;
@@ -28,11 +28,7 @@ namespace Methodic
 		{
 			try {
 				var result = method.Invoke(component, parameterValues);
-
-				// Display the return value, if one is expected.
-				if (method.ReturnType != typeof(void)) {
-					Debug.Log("[Methodic] Result: " + result);
-				}
+				LogReturnValue(method, result);
 			} catch (ArgumentException e) {
 				Debug.LogError("[Methodic] Unable to invoke method: " + e.Message);
 			}
@@ -171,6 +167,20 @@ namespace Methodic
 			}
 
 			return defaultValue;
+		}
+
+		/// <summary>
+		/// Displays the return value from a method invocation.
+		/// </summary>
+		/// <param name="method">Method that was executed.</param>
+		/// <param name="result">Result of method call.</param>
+		static void LogReturnValue (MethodInfo method, object result)
+		{
+			if (method.ReturnType == typeof(void)) {
+				return;
+			}
+
+			Debug.Log("[Methodic] Result: " + result);
 		}
 	}
 }

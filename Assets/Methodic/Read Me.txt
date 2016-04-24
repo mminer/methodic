@@ -35,6 +35,9 @@ parameter type is unrecognized; say, if it's a class of your own creation.
 Version History
 ---------------
 
+1.2.1 - April 24, 2016
+- Add icon to editor window title.
+
 1.2 - January 27, 2014
 - Split components into separate dropdown.
 - Add option to lock onto a selected game object.
