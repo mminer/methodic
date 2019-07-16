@@ -1,7 +1,7 @@
 //
 // Author: Matthew Miner
 //         matthew@matthewminer.com
-//         http://matthewminer.com
+//         https://matthewminer.com
 //
 // Copyright (c) 2016
 //
