@@ -58,19 +58,23 @@ namespace Methodic
             "Show methods beyond those belonging to the instance."
         );
 
-        static Preferences()
+        [SettingsProvider]
+        static SettingsProvider CreateSettingsProvider()
         {
-            LoadPreferences();
+            return new SettingsProvider("Project/Methodic", SettingsScope.User, new[] { "Methodic", "Method" })
+            {
+                activateHandler = (searchContext, rootElement) => Load(),
+                guiHandler = searchContext => DisplayGUI()
+            };
         }
 
-        [PreferenceItem("Methodic")]
-        static void OnGUI()
+        static void DisplayGUI()
         {
             showPrivate = EditorGUILayout.Toggle(showPrivateLabel, showPrivate);
             showStatic = EditorGUILayout.Toggle(showStaticLabel, showStatic);
 
             if (GUI.changed) {
-                SavePreferences();
+                Save();
 
                 if (OnPreferencesChange != null) {
                     OnPreferencesChange();
@@ -78,13 +82,13 @@ namespace Methodic
             }
         }
 
-        static void LoadPreferences()
+        static void Load()
         {
             showPrivate = EditorPrefs.GetBool(showPrivateKey, true);
             showStatic = EditorPrefs.GetBool(showStaticKey, true);
         }
 
-        static void SavePreferences()
+        static void Save()
         {
             EditorPrefs.SetBool(showPrivateKey, showPrivate);
             EditorPrefs.SetBool(showStaticKey, showStatic);
