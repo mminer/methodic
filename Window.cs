@@ -80,6 +80,12 @@ namespace Methodic
         bool lockedToGameObject;
         Vector2 scrollPosition;
 
+        [MenuItem("Window/Methodic %#m")]
+        static void OpenMethodic ()
+        {
+            EditorWindow.GetWindow<Window>("Methodic");
+        }
+
         void OnEnable ()
         {
             #if UNITY_5_3_OR_NEWER
