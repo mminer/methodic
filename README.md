@@ -32,30 +32,39 @@ value is sent when the function in invoked. This also happens when the
 parameter type is unrecognized; say, if it's a class of your own creation.
 
 
+## Compatibility
+
+Requires Unity 2018.3 or later.
+
+
 ## Version History
 
+1.2.2 - July 15, 2019
+- Migrate from `PreferenceItem` to `SettingsProvider` to avoid deprecation
+  warning
+
 1.2.1 - April 24, 2016
-- Add icon to editor window title.
+- Add icon to editor window title
 
 1.2 - January 27, 2014
-- Split components into separate dropdown.
-- Add option to lock onto a selected game object.
+- Split components into separate dropdown
+- Add option to lock onto a selected game object
 
 1.1.2 - December 24, 2013
-- Replace deprecated UnityEngine.Undo function use.
+- Replace deprecated UnityEngine.Undo function use
 
 1.1.1 - May 9, 2012
-- Added demo scene.
-- Fixed failed repaint on selection change.
-- Tweaked editor window layout.
+- Added demo scene
+- Fixed failed repaint on selection change
+- Tweaked editor window layout
 
 1.1 - May 5, 2012
-- Moved preferences to Unity's preferences window.
-- Updated EditorGUILayout.ObjectField() call to remove deprecation warning.
-- Namespaced editor window; this change drops support for Unity 3.
+- Moved preferences to Unity's preferences window
+- Updated EditorGUILayout.ObjectField() call to remove deprecation warning
+- Namespaced editor window; this change drops support for Unity 3
 
 1.0.1 - June 23, 2011
-- Initial release.
+- Initial release
 
 
 ## Contact
