@@ -13,9 +13,6 @@ using UnityEngine;
 
 namespace Methodic
 {
-    /// <summary>
-    /// Options for controlling which methods are shown / executable.
-    /// </summary>
     static class Preferences
     {
         internal static event Action OnPreferencesChange;
@@ -66,9 +63,6 @@ namespace Methodic
             LoadPreferences();
         }
 
-        /// <summary>
-        /// Displays preferences GUI.
-        /// </summary>
         [PreferenceItem("Methodic")]
         static void OnGUI ()
         {
@@ -84,18 +78,12 @@ namespace Methodic
             }
         }
 
-        /// <summary>
-        /// Reads the preferences from disk.
-        /// </summary>
         static void LoadPreferences ()
         {
             showPrivate = EditorPrefs.GetBool(showPrivateKey, true);
             showStatic = EditorPrefs.GetBool(showStaticKey, true);
         }
 
-        /// <summary>
-        /// Saves the preferences to disk.
-        /// </summary>
         static void SavePreferences ()
         {
             EditorPrefs.SetBool(showPrivateKey, showPrivate);

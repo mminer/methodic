@@ -13,9 +13,6 @@ using UnityEngine;
 
 namespace Methodic
 {
-    /// <summary>
-    /// The Methodic editor window.
-    /// </summary>
     class Window : EditorWindow
     {
         static readonly GUIContent invokeLabel = new GUIContent(
@@ -207,10 +204,6 @@ namespace Methodic
             }
         }
 
-        /// <summary>
-        /// Runs the specified action if the GUI changed.
-        /// </summary>
-        /// <param name="action">Action to run.</param>
         void OnGUIChanged (Action action)
         {
             if (!GUI.changed) {
@@ -221,9 +214,6 @@ namespace Methodic
             GUI.changed = true;
         }
 
-        /// <summary>
-        /// Resets the components and methods.
-        /// </summary>
         void Refresh ()
         {
             RefreshComponents();
@@ -232,27 +222,18 @@ namespace Methodic
             Repaint();
         }
 
-        /// <summary>
-        /// Resets the components to the selected game object's.
-        /// </summary>
         void RefreshComponents ()
         {
             TargetInfo.SetSelectedGameObject(selectedGameObject);
             componentIndex = 0;
         }
 
-        /// <summary>
-        /// Resets the methods to the selected component's.
-        /// </summary>
         void RefreshMethods ()
         {
             TargetInfo.SetSelectedComponent(selectedComponent);
             methodIndex = 0;
         }
 
-        /// <summary>
-        /// Resets the parameters to the selected methods's.
-        /// </summary>
         void RefreshParameters ()
         {
             TargetInfo.SetSelectedMethod(selectedMethod);

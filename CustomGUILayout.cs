@@ -45,9 +45,6 @@ namespace Methodic
         /// Editor GUI field for a parameter.
         /// Specific EditorGUILayout function used depends on parameter type.
         /// </summary>
-        /// <param name="parameter">Parameter info.</param>
-        /// <param name="currentValue">Current value.</param>
-        /// <returns>New value for parameter.</returns>
         internal static object ParameterField (ParameterInfo parameter, object currentValue)
         {
             var parameterType = parameter.ParameterType;
