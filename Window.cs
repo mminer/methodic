@@ -85,10 +85,7 @@ namespace Methodic
 
         void OnEnable()
         {
-            #if UNITY_5_3_OR_NEWER
-                titleContent = titleLabel;
-            #endif
-
+            titleContent = titleLabel;
             Preferences.OnPreferencesChange += Refresh;
             Refresh();
         }
