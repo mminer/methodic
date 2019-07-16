@@ -13,93 +13,93 @@ using UnityEngine;
 
 namespace Methodic
 {
-	/// <summary>
-	/// Options for controlling which methods are shown / executable.
-	/// </summary>
-	static class Preferences
-	{
-		internal static event Action OnPreferencesChange;
+    /// <summary>
+    /// Options for controlling which methods are shown / executable.
+    /// </summary>
+    static class Preferences
+    {
+        internal static event Action OnPreferencesChange;
 
-		internal static BindingFlags reflectionOptions
-		{
-			get {
-				var flags = standardRelectionOptions;
+        internal static BindingFlags reflectionOptions
+        {
+            get {
+                var flags = standardRelectionOptions;
 
-				if (showPrivate) {
-					flags |= BindingFlags.NonPublic;
-				}
+                if (showPrivate) {
+                    flags |= BindingFlags.NonPublic;
+                }
 
-				if (showStatic) {
-					flags |= BindingFlags.Static;
-				}
+                if (showStatic) {
+                    flags |= BindingFlags.Static;
+                }
 
-				return flags;
-			}
-		}
+                return flags;
+            }
+        }
 
-		static bool showPrivate;
-		static bool showStatic;
+        static bool showPrivate;
+        static bool showStatic;
 
-		const BindingFlags standardRelectionOptions =
-			BindingFlags.DeclaredOnly |
-			BindingFlags.Instance |
-			BindingFlags.Public;
+        const BindingFlags standardRelectionOptions =
+            BindingFlags.DeclaredOnly |
+            BindingFlags.Instance |
+            BindingFlags.Public;
 
-		// EditorPrefs keys.
-		const string showPrivateKey = "methodic_include_private";
-		const string showStaticKey = "methodic_include_static";
+        // EditorPrefs keys.
+        const string showPrivateKey = "methodic_include_private";
+        const string showStaticKey = "methodic_include_static";
 
-		// Toggle labels:
+        // Toggle labels:
 
-		static readonly GUIContent showPrivateLabel = new GUIContent(
-			"Show Private",
-			"Show methods unavailable outside the class."
-		);
+        static readonly GUIContent showPrivateLabel = new GUIContent(
+            "Show Private",
+            "Show methods unavailable outside the class."
+        );
 
-		static readonly GUIContent showStaticLabel = new GUIContent(
-			"Show Static",
-			"Show methods beyond those belonging to the instance."
-		);
+        static readonly GUIContent showStaticLabel = new GUIContent(
+            "Show Static",
+            "Show methods beyond those belonging to the instance."
+        );
 
-		static Preferences ()
-		{
-			LoadPreferences();
-		}
+        static Preferences ()
+        {
+            LoadPreferences();
+        }
 
-		/// <summary>
-		/// Displays preferences GUI.
-		/// </summary>
-		[PreferenceItem("Methodic")]
-		static void OnGUI ()
-		{
-			showPrivate = EditorGUILayout.Toggle(showPrivateLabel, showPrivate);
-			showStatic = EditorGUILayout.Toggle(showStaticLabel, showStatic);
+        /// <summary>
+        /// Displays preferences GUI.
+        /// </summary>
+        [PreferenceItem("Methodic")]
+        static void OnGUI ()
+        {
+            showPrivate = EditorGUILayout.Toggle(showPrivateLabel, showPrivate);
+            showStatic = EditorGUILayout.Toggle(showStaticLabel, showStatic);
 
-			if (GUI.changed) {
-				SavePreferences();
+            if (GUI.changed) {
+                SavePreferences();
 
-				if (OnPreferencesChange != null) {
-					OnPreferencesChange();
-				}
-			}
-		}
+                if (OnPreferencesChange != null) {
+                    OnPreferencesChange();
+                }
+            }
+        }
 
-		/// <summary>
-		/// Reads the preferences from disk.
-		/// </summary>
-		static void LoadPreferences ()
-		{
-			showPrivate = EditorPrefs.GetBool(showPrivateKey, true);
-			showStatic = EditorPrefs.GetBool(showStaticKey, true);
-		}
+        /// <summary>
+        /// Reads the preferences from disk.
+        /// </summary>
+        static void LoadPreferences ()
+        {
+            showPrivate = EditorPrefs.GetBool(showPrivateKey, true);
+            showStatic = EditorPrefs.GetBool(showStaticKey, true);
+        }
 
-		/// <summary>
-		/// Saves the preferences to disk.
-		/// </summary>
-		static void SavePreferences ()
-		{
-			EditorPrefs.SetBool(showPrivateKey, showPrivate);
-			EditorPrefs.SetBool(showStaticKey, showStatic);
-		}
-	}
+        /// <summary>
+        /// Saves the preferences to disk.
+        /// </summary>
+        static void SavePreferences ()
+        {
+            EditorPrefs.SetBool(showPrivateKey, showPrivate);
+            EditorPrefs.SetBool(showStaticKey, showStatic);
+        }
+    }
 }
