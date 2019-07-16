@@ -3,7 +3,7 @@
 //         matthew@matthewminer.com
 //         https://matthewminer.com
 //
-// Copyright (c) 2016
+// Copyright (c) 2019
 //
 
 using System;
