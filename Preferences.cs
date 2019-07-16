@@ -58,13 +58,13 @@ namespace Methodic
             "Show methods beyond those belonging to the instance."
         );
 
-        static Preferences ()
+        static Preferences()
         {
             LoadPreferences();
         }
 
         [PreferenceItem("Methodic")]
-        static void OnGUI ()
+        static void OnGUI()
         {
             showPrivate = EditorGUILayout.Toggle(showPrivateLabel, showPrivate);
             showStatic = EditorGUILayout.Toggle(showStaticLabel, showStatic);
@@ -78,13 +78,13 @@ namespace Methodic
             }
         }
 
-        static void LoadPreferences ()
+        static void LoadPreferences()
         {
             showPrivate = EditorPrefs.GetBool(showPrivateKey, true);
             showStatic = EditorPrefs.GetBool(showStaticKey, true);
         }
 
-        static void SavePreferences ()
+        static void SavePreferences()
         {
             EditorPrefs.SetBool(showPrivateKey, showPrivate);
             EditorPrefs.SetBool(showStaticKey, showStatic);

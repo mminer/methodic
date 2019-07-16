@@ -18,7 +18,7 @@ namespace Methodic
     /// </summary>
     static class Reflector
     {
-        internal static void InvokeMethod (MonoBehaviour component, MethodInfo method, object[] parameterValues)
+        internal static void InvokeMethod(MonoBehaviour component, MethodInfo method, object[] parameterValues)
         {
             try {
                 var result = method.Invoke(component, parameterValues);
@@ -28,7 +28,7 @@ namespace Methodic
             }
         }
 
-        internal static MonoBehaviour[] GetComponents (GameObject gameObject)
+        internal static MonoBehaviour[] GetComponents(GameObject gameObject)
         {
             if (gameObject == null) {
                 return new MonoBehaviour[] {};
@@ -45,7 +45,7 @@ namespace Methodic
             return components;
         }
 
-        internal static string[] GetComponentLabels (MonoBehaviour[] components)
+        internal static string[] GetComponentLabels(MonoBehaviour[] components)
         {
             if (components == null) {
                 return new string[] {};
@@ -58,7 +58,7 @@ namespace Methodic
             return labels;
         }
 
-        internal static MethodInfo[] GetMethods (MonoBehaviour component)
+        internal static MethodInfo[] GetMethods(MonoBehaviour component)
         {
             if (component == null) {
                 return new MethodInfo[] {};
@@ -72,7 +72,7 @@ namespace Methodic
             return methods;
         }
 
-        internal static string[] GetMethodLabels (MethodInfo[] methods)
+        internal static string[] GetMethodLabels(MethodInfo[] methods)
         {
             if (methods == null) {
                 return new string[] {};
@@ -85,7 +85,7 @@ namespace Methodic
             return labels;
         }
 
-        internal static ParameterInfo[] GetParameters (MethodInfo method)
+        internal static ParameterInfo[] GetParameters(MethodInfo method)
         {
             if (method == null) {
                 return new ParameterInfo[] {};
@@ -98,7 +98,7 @@ namespace Methodic
             return parameters;
         }
 
-        internal static object[] GetDefaultParameterValues (ParameterInfo[] parameters)
+        internal static object[] GetDefaultParameterValues(ParameterInfo[] parameters)
         {
             if (parameters == null) {
                 return new object[] {};
@@ -111,7 +111,7 @@ namespace Methodic
             return values;
         }
 
-        static object GetDefaultParameterValue (ParameterInfo parameter)
+        static object GetDefaultParameterValue(ParameterInfo parameter)
         {
             object defaultValue = null;
 
@@ -126,7 +126,7 @@ namespace Methodic
             return defaultValue;
         }
 
-        static void LogReturnValue (MethodInfo method, object result)
+        static void LogReturnValue(MethodInfo method, object result)
         {
             if (method.ReturnType == typeof(void)) {
                 return;

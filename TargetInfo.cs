@@ -23,7 +23,7 @@ namespace Methodic
         internal static ParameterInfo[] parameters { get; private set; }
         internal static object[] parameterValues { get; private set; }
 
-        static TargetInfo ()
+        static TargetInfo()
         {
             components = new MonoBehaviour[] {};
             componentLabels = new string[] {};
@@ -33,19 +33,19 @@ namespace Methodic
             parameterValues = new object[] {};
         }
 
-        internal static void SetSelectedGameObject (GameObject selectedGameObject)
+        internal static void SetSelectedGameObject(GameObject selectedGameObject)
         {
             components = Reflector.GetComponents(selectedGameObject);
             componentLabels = Reflector.GetComponentLabels(components);
         }
 
-        internal static void SetSelectedComponent (MonoBehaviour selectedComponent)
+        internal static void SetSelectedComponent(MonoBehaviour selectedComponent)
         {
             methods = Reflector.GetMethods(selectedComponent);
             methodLabels = Reflector.GetMethodLabels(methods);
         }
 
-        internal static void SetSelectedMethod (MethodInfo selectedMethod)
+        internal static void SetSelectedMethod(MethodInfo selectedMethod)
         {
             parameters = Reflector.GetParameters(selectedMethod);
             parameterValues = Reflector.GetDefaultParameterValues(TargetInfo.parameters);

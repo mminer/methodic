@@ -78,12 +78,12 @@ namespace Methodic
         Vector2 scrollPosition;
 
         [MenuItem("Window/Methodic %#m")]
-        static void OpenMethodic ()
+        static void OpenMethodic()
         {
             EditorWindow.GetWindow<Window>("Methodic");
         }
 
-        void OnEnable ()
+        void OnEnable()
         {
             #if UNITY_5_3_OR_NEWER
                 titleContent = titleLabel;
@@ -93,19 +93,19 @@ namespace Methodic
             Refresh();
         }
 
-        void OnDisable ()
+        void OnDisable()
         {
             Preferences.OnPreferencesChange -= Refresh;
         }
 
-        void OnGUI ()
+        void OnGUI()
         {
             DrawToolbar();
             DrawParametersForm();
             DrawInvokeButton();
         }
 
-        void OnSelectionChange ()
+        void OnSelectionChange()
         {
             if (lockedToGameObject) {
                 return;
@@ -114,7 +114,7 @@ namespace Methodic
             Refresh();
         }
 
-        void DrawToolbar ()
+        void DrawToolbar()
         {
             EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
 
@@ -139,7 +139,7 @@ namespace Methodic
             EditorGUILayout.EndHorizontal();
         }
 
-        void DrawParametersForm ()
+        void DrawParametersForm()
         {
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
 
@@ -188,7 +188,7 @@ namespace Methodic
             EditorGUILayout.EndScrollView();
         }
 
-        void DrawInvokeButton ()
+        void DrawInvokeButton()
         {
             GUI.enabled = selectedGameObject != null;
 
@@ -204,7 +204,7 @@ namespace Methodic
             }
         }
 
-        void OnGUIChanged (Action action)
+        void OnGUIChanged(Action action)
         {
             if (!GUI.changed) {
                 return;
@@ -214,7 +214,7 @@ namespace Methodic
             GUI.changed = true;
         }
 
-        void Refresh ()
+        void Refresh()
         {
             RefreshComponents();
             RefreshMethods();
@@ -222,19 +222,19 @@ namespace Methodic
             Repaint();
         }
 
-        void RefreshComponents ()
+        void RefreshComponents()
         {
             TargetInfo.SetSelectedGameObject(selectedGameObject);
             componentIndex = 0;
         }
 
-        void RefreshMethods ()
+        void RefreshMethods()
         {
             TargetInfo.SetSelectedComponent(selectedComponent);
             methodIndex = 0;
         }
 
-        void RefreshParameters ()
+        void RefreshParameters()
         {
             TargetInfo.SetSelectedMethod(selectedMethod);
         }

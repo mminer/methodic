@@ -22,7 +22,7 @@ namespace Methodic
         /// <summary>
         /// A help box indicating that no methods are available for selection.
         /// </summary>
-        internal static void NoMethodsBox ()
+        internal static void NoMethodsBox()
         {
             EditorGUILayout.HelpBox(
                 "Components attached to the selected game object contain no methods of the desired type.",
@@ -33,7 +33,7 @@ namespace Methodic
         /// <summary>
         /// A help box indicating that no game object is selected.
         /// </summary>
-        internal static void NoSelectionBox ()
+        internal static void NoSelectionBox()
         {
             EditorGUILayout.HelpBox(
                 "Select a game object in the Hierarchy to list its methods.",
@@ -45,7 +45,7 @@ namespace Methodic
         /// Editor GUI field for a parameter.
         /// Specific EditorGUILayout function used depends on parameter type.
         /// </summary>
-        internal static object ParameterField (ParameterInfo parameter, object currentValue)
+        internal static object ParameterField(ParameterInfo parameter, object currentValue)
         {
             var parameterType = parameter.ParameterType;
             var label = new GUIContent(parameter.Name, parameterType.Name);
