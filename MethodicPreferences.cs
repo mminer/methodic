@@ -13,20 +13,25 @@ using UnityEngine;
 
 namespace Methodic
 {
-    static class Preferences
+    static class MethodicPreferences
     {
-        internal static event Action OnPreferencesChange;
+        public static event Action OnPreferencesChange;
 
-        internal static BindingFlags reflectionOptions
+        public static BindingFlags reflectionOptions
         {
-            get {
-                var flags = standardRelectionOptions;
+            get
+            {
+                var flags = BindingFlags.DeclaredOnly |
+                            BindingFlags.Instance |
+                            BindingFlags.Public;
 
-                if (showPrivate) {
+                if (showPrivate)
+                {
                     flags |= BindingFlags.NonPublic;
                 }
 
-                if (showStatic) {
+                if (showStatic)
+                {
                     flags |= BindingFlags.Static;
                 }
 
@@ -37,11 +42,6 @@ namespace Methodic
         static bool showPrivate;
         static bool showStatic;
 
-        const BindingFlags standardRelectionOptions =
-            BindingFlags.DeclaredOnly |
-            BindingFlags.Instance |
-            BindingFlags.Public;
-
         // EditorPrefs keys.
         const string showPrivateKey = "methodic_include_private";
         const string showStaticKey = "methodic_include_static";
@@ -50,21 +50,19 @@ namespace Methodic
 
         static readonly GUIContent showPrivateLabel = new GUIContent(
             "Show Private",
-            "Show methods unavailable outside the class."
-        );
+            "Show methods unavailable outside the class.");
 
         static readonly GUIContent showStaticLabel = new GUIContent(
             "Show Static",
-            "Show methods beyond those belonging to the instance."
-        );
+            "Show methods beyond those belonging to the instance.");
 
         [SettingsProvider]
         static SettingsProvider CreateSettingsProvider()
         {
             return new SettingsProvider("Project/Methodic", SettingsScope.User, new[] { "Methodic", "Method" })
             {
-                activateHandler = (searchContext, rootElement) => Load(),
-                guiHandler = searchContext => DisplayGUI()
+                activateHandler = (searchContext, rootElement) => LoadPreferences(),
+                guiHandler = searchContext => DisplayGUI(),
             };
         }
 
@@ -73,22 +71,20 @@ namespace Methodic
             showPrivate = EditorGUILayout.Toggle(showPrivateLabel, showPrivate);
             showStatic = EditorGUILayout.Toggle(showStaticLabel, showStatic);
 
-            if (GUI.changed) {
-                Save();
-
-                if (OnPreferencesChange != null) {
-                    OnPreferencesChange();
-                }
+            if (GUI.changed)
+            {
+                SavePreferences();
+                OnPreferencesChange?.Invoke();
             }
         }
 
-        static void Load()
+        static void LoadPreferences()
         {
             showPrivate = EditorPrefs.GetBool(showPrivateKey, true);
             showStatic = EditorPrefs.GetBool(showStaticKey, true);
         }
 
-        static void Save()
+        static void SavePreferences()
         {
             EditorPrefs.SetBool(showPrivateKey, showPrivate);
             EditorPrefs.SetBool(showStaticKey, showStatic);
