@@ -11,9 +11,8 @@ The package can be purchased and downloaded from the
 
 ## Getting Started
 
-Open the Methodic window by selecting the Window > Methodic menu item. If you
-dig hotkeys, use shift-command-m (Mac) or shift-control-m (Windows) instead. I
-like to keep this window docked below or beside the Inspector panel.
+Open Methodic via Window > General > Methodic. I like to keep this window docked
+below or beside the Inspector panel.
 
 Click on a game object with your custom scripts attached. Methodic displays
 the script's functions in a snazzy dropdown. If the selected function accepts

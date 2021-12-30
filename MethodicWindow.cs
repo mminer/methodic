@@ -50,7 +50,7 @@ namespace Methodic
         bool lockedToGameObject;
         Vector2 scrollPosition;
 
-        [MenuItem("Window/Methodic %#m")]
+        [MenuItem("Window/General/Methodic")]
         static void OpenMethodic()
         {
             GetWindow<MethodicWindow>("Methodic");
