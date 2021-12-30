@@ -1,10 +1,4 @@
-//
-// Author: Matthew Miner
-//         matthew@matthewminer.com
-//         https://matthewminer.com
-//
-// Copyright (c) 2019
-//
+// Copyright Matthew Miner <matthew@matthewminer.com>
 
 using System;
 using System.Reflection;
