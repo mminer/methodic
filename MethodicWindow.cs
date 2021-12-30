@@ -10,7 +10,7 @@ namespace Methodic
 {
     class MethodicWindow : EditorWindow
     {
-        static readonly MethodicTarget target = new MethodicTarget();
+        const string includedMethodTypesPrefsKey = "methodic_included_method_types";
 
         static readonly GUIContent invokeLabel = new GUIContent(
             "Invoke",
@@ -20,6 +20,8 @@ namespace Methodic
             "Lock",
             "Lock Methodic to the currently selected game object.");
 
+        static readonly MethodicTarget target = new MethodicTarget();
+
         int componentIndex;
         int methodIndex;
 
@@ -27,7 +29,7 @@ namespace Methodic
         {
             get
             {
-                if (!lockedToGameObject || _selectedGameObject == null)
+                if (!lockToGameObject || _selectedGameObject == null)
                 {
                     _selectedGameObject = Selection.activeGameObject;
                 }
@@ -41,7 +43,7 @@ namespace Methodic
         MonoBehaviour selectedComponent => target.components.Length > 0 ? target.components[componentIndex] : null;
         MethodInfo selectedMethod => target.methods.Length > 0 ? target.methods[methodIndex] : null;
 
-        bool lockedToGameObject;
+        bool lockToGameObject;
         Vector2 scrollPosition;
 
         [MenuItem("Window/General/Methodic")]
@@ -54,13 +56,7 @@ namespace Methodic
         {
             var icon = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Methodic/Editor/Icon.png");
             titleContent = new GUIContent("Methodic", icon);
-            MethodicPreferences.OnPreferencesChange += Refresh;
-            Refresh();
-        }
-
-        void OnDisable()
-        {
-            MethodicPreferences.OnPreferencesChange -= Refresh;
+            target.includedMethodTypes = (MethodicTarget.MethodTypes)EditorPrefs.GetInt(includedMethodTypesPrefsKey);
         }
 
         void OnGUI()
@@ -69,17 +65,26 @@ namespace Methodic
 
             using (new EditorGUILayout.HorizontalScope(EditorStyles.toolbar))
             {
-                GUILayout.FlexibleSpace();
-
-                lockedToGameObject = GUILayout.Toggle(
-                    lockedToGameObject,
-                    lockLabel,
-                    EditorStyles.toolbarButton
-                );
+                target.includedMethodTypes = (MethodicTarget.MethodTypes)EditorGUILayout.EnumFlagsField(
+                    target.includedMethodTypes,
+                    EditorStyles.toolbarPopup);
 
                 RunIfGUIChanged(() =>
                 {
-                    if (lockedToGameObject)
+                    EditorPrefs.SetInt(includedMethodTypesPrefsKey, (int)target.includedMethodTypes);
+                    Refresh();
+                });
+
+                GUILayout.FlexibleSpace();
+
+                lockToGameObject = GUILayout.Toggle(
+                    lockToGameObject,
+                    lockLabel,
+                    EditorStyles.toolbarButton);
+
+                RunIfGUIChanged(() =>
+                {
+                    if (lockToGameObject)
                     {
                         return;
                     }
@@ -92,7 +97,7 @@ namespace Methodic
 
             // Parameters:
 
-            using (var scrollView =  new EditorGUILayout.ScrollViewScope(scrollPosition))
+            using (var scrollView = new EditorGUILayout.ScrollViewScope(scrollPosition))
             {
                 scrollPosition = scrollView.scrollPosition;
 
