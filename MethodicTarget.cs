@@ -12,15 +12,8 @@ namespace Methodic
     /// </summary>
     class MethodicTarget
     {
-        public enum MethodTypes
-        {
-            Private = 1 << 0,
-            Static  = 1 << 1,
-
-            OnlyPublic = 0, // Custom name for "Nothing" option
-        }
-
-        public MethodTypes includedMethodTypes { get; set; }
+        public bool showPrivate { get; set; }
+        public bool showStatic { get; set; }
 
         public MonoBehaviour[] components { get; private set; } = Array.Empty<MonoBehaviour>();
         public string[] componentLabels { get; private set; } = Array.Empty<string>();
@@ -37,12 +30,12 @@ namespace Methodic
                             BindingFlags.Instance |
                             BindingFlags.Public;
 
-                if (includedMethodTypes.HasFlag(MethodTypes.Private))
+                if (showPrivate)
                 {
                     flags |= BindingFlags.NonPublic;
                 }
 
-                if (includedMethodTypes.HasFlag(MethodTypes.Static))
+                if (showStatic)
                 {
                     flags |= BindingFlags.Static;
                 }

@@ -8,22 +8,18 @@ using UnityEngine;
 
 namespace Methodic
 {
-    class MethodicWindow : EditorWindow
+    class MethodicWindow : EditorWindow, IHasCustomMenu
     {
-        const string includedMethodTypesPrefsKey = "methodic_included_method_types";
+        // EditorPrefs keys.
+        const string showPrivatePrefsKey = "methodic_include_private";
+        const string showStaticPrefsKey = "methodic_include_static";
 
-        static readonly GUIContent invokeLabel = new GUIContent(
-            "Invoke",
-            "Execute this method.");
-
-        static readonly GUIContent lockLabel = new GUIContent(
-            "Lock",
-            "Lock Methodic to the currently selected game object.");
+        static readonly GUIContent invokeLabel = new GUIContent("Invoke", "Run this method.");
+        static readonly GUIContent lockLabel = new GUIContent("Lock");
+        static readonly GUIContent privateLabel = new GUIContent("Private");
+        static readonly GUIContent staticLabel = new GUIContent("Static");
 
         static readonly MethodicTarget target = new MethodicTarget();
-
-        int componentIndex;
-        int methodIndex;
 
         GameObject selectedGameObject
         {
@@ -43,7 +39,9 @@ namespace Methodic
         MonoBehaviour selectedComponent => target.components.Length > 0 ? target.components[componentIndex] : null;
         MethodInfo selectedMethod => target.methods.Length > 0 ? target.methods[methodIndex] : null;
 
+        int componentIndex;
         bool lockToGameObject;
+        int methodIndex;
         Vector2 scrollPosition;
 
         [MenuItem("Window/General/Methodic")]
@@ -52,49 +50,46 @@ namespace Methodic
             GetWindow<MethodicWindow>("Methodic");
         }
 
+        public void AddItemsToMenu(GenericMenu menu)
+        {
+            menu.AddItem(lockLabel, lockToGameObject, () =>
+            {
+                lockToGameObject = !lockToGameObject;
+
+                if (!lockToGameObject)
+                {
+                    RefreshComponents();
+                    RefreshMethods();
+                    RefreshParameters();
+                }
+            });
+
+            menu.AddSeparator("");
+
+            menu.AddItem(privateLabel, target.showPrivate, () =>
+            {
+                target.showPrivate = !target.showPrivate;
+                Refresh();
+            });
+
+            menu.AddItem(staticLabel, target.showStatic, () =>
+            {
+                target.showStatic = !target.showStatic;
+                Refresh();
+            });
+        }
+
         void OnEnable()
         {
             var icon = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Methodic/Editor/Icon.png");
             titleContent = new GUIContent("Methodic", icon);
-            target.includedMethodTypes = (MethodicTarget.MethodTypes)EditorPrefs.GetInt(includedMethodTypesPrefsKey);
+
+            target.showPrivate = EditorPrefs.GetBool(showPrivatePrefsKey);
+            target.showStatic = EditorPrefs.GetBool(showStaticPrefsKey);
         }
 
         void OnGUI()
         {
-            // Toolbar:
-
-            using (new EditorGUILayout.HorizontalScope(EditorStyles.toolbar))
-            {
-                target.includedMethodTypes = (MethodicTarget.MethodTypes)EditorGUILayout.EnumFlagsField(
-                    target.includedMethodTypes,
-                    EditorStyles.toolbarPopup);
-
-                RunIfGUIChanged(() =>
-                {
-                    EditorPrefs.SetInt(includedMethodTypesPrefsKey, (int)target.includedMethodTypes);
-                    Refresh();
-                });
-
-                GUILayout.FlexibleSpace();
-
-                lockToGameObject = GUILayout.Toggle(
-                    lockToGameObject,
-                    lockLabel,
-                    EditorStyles.toolbarButton);
-
-                RunIfGUIChanged(() =>
-                {
-                    if (lockToGameObject)
-                    {
-                        return;
-                    }
-
-                    RefreshComponents();
-                    RefreshMethods();
-                    RefreshParameters();
-                });
-            }
-
             // Parameters:
 
             using (var scrollView = new EditorGUILayout.ScrollViewScope(scrollPosition))
