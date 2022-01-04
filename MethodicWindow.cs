@@ -3,6 +3,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 
@@ -14,6 +15,7 @@ namespace Methodic
         const string showPrivatePrefsKey = "methodic_include_private";
         const string showStaticPrefsKey = "methodic_include_static";
 
+        static readonly GUIContent delayLabel = new GUIContent("Delay", "Seconds to wait before invoking the method.");
         static readonly GUIContent invokeLabel = new GUIContent("Invoke", "Run this method.");
         static readonly GUIContent lockLabel = new GUIContent("Lock");
         static readonly GUIContent privateLabel = new GUIContent("Private");
@@ -40,6 +42,7 @@ namespace Methodic
         MethodInfo selectedMethod => target.methods.Length > 0 ? target.methods[methodIndex] : null;
 
         int componentIndex;
+        float delay;
         bool lockToGameObject;
         int methodIndex;
         Vector2 scrollPosition;
@@ -141,12 +144,23 @@ namespace Methodic
             // Invoke Button:
 
             using (new EditorGUI.DisabledScope(selectedGameObject == null))
+            using (new EditorGUILayout.HorizontalScope())
             {
                 if (GUILayout.Button(invokeLabel))
                 {
                     Undo.RecordObject(selectedGameObject, $"{selectedComponent.name} Call");
-                    InvokeMethod(selectedComponent, selectedMethod, target.parameterValues);
+
+                    if (delay > 0)
+                    {
+                        _ = InvokeMethodWithDelay(selectedComponent, selectedMethod, target.parameterValues, 2);
+                    }
+                    else
+                    {
+                        InvokeMethod(selectedComponent, selectedMethod, target.parameterValues);
+                    }
                 }
+
+                delay = EditorGUILayout.FloatField(delayLabel, delay, GUILayout.ExpandWidth(false));
             }
         }
 
@@ -190,6 +204,12 @@ namespace Methodic
             {
                 Debug.LogError($"[Methodic] Unable to invoke method: {e.Message}");
             }
+        }
+
+        static async Task InvokeMethodWithDelay(MonoBehaviour component, MethodInfo method, object[] parameterValues, float delay)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(delay));
+            InvokeMethod(component, method, parameterValues);
         }
 
         static object ParameterField(ParameterInfo parameter, object currentValue)
