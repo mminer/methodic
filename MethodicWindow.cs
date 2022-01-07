@@ -137,7 +137,6 @@ namespace Methodic
             // Invoke Button:
 
             using (new EditorGUI.DisabledScope(selectedGameObject == null))
-            using (new EditorGUILayout.HorizontalScope())
             {
                 if (GUILayout.Button(invokeLabel))
                 {
@@ -152,9 +151,9 @@ namespace Methodic
                         InvokeMethod(SelectedComponent, SelectedMethod, target.parameterValues);
                     }
                 }
-
-                delay = EditorGUILayout.FloatField(delayLabel, delay, GUILayout.ExpandWidth(false));
             }
+
+            delay = EditorGUILayout.FloatField(delayLabel, delay, GUILayout.ExpandWidth(false));
         }
 
         void HandleSelectionChanged()
