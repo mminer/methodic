@@ -23,29 +23,15 @@ namespace Methodic
 
         static readonly MethodicTarget target = new MethodicTarget();
 
-        GameObject selectedGameObject
-        {
-            get
-            {
-                if (!lockToGameObject || _selectedGameObject == null)
-                {
-                    _selectedGameObject = Selection.activeGameObject;
-                }
-
-                return _selectedGameObject;
-            }
-        }
-
-        GameObject _selectedGameObject;
-
-        MonoBehaviour selectedComponent => target.components.Length > 0 ? target.components[componentIndex] : null;
-        MethodInfo selectedMethod => target.methods.Length > 0 ? target.methods[methodIndex] : null;
+        MonoBehaviour SelectedComponent => target.components.Length > 0 ? target.components[componentIndex] : null;
+        MethodInfo SelectedMethod => target.methods.Length > 0 ? target.methods[methodIndex] : null;
 
         int componentIndex;
         float delay;
         bool lockToGameObject;
         int methodIndex;
         Vector2 scrollPosition;
+        GameObject selectedGameObject;
 
         [MenuItem("Window/General/Methodic")]
         static void OpenMethodic()
@@ -89,6 +75,13 @@ namespace Methodic
 
             target.showPrivate = EditorPrefs.GetBool(showPrivatePrefsKey);
             target.showStatic = EditorPrefs.GetBool(showStaticPrefsKey);
+
+            Selection.selectionChanged += HandleSelectionChanged;
+        }
+
+        void OnDisable()
+        {
+            Selection.selectionChanged -= HandleSelectionChanged;
         }
 
         void OnGUI()
@@ -148,20 +141,26 @@ namespace Methodic
             {
                 if (GUILayout.Button(invokeLabel))
                 {
-                    Undo.RecordObject(selectedGameObject, $"{selectedComponent.name} Call");
+                    Undo.RecordObject(selectedGameObject, $"{SelectedComponent.name} Call");
 
                     if (delay > 0)
                     {
-                        _ = InvokeMethodWithDelay(selectedComponent, selectedMethod, target.parameterValues, 2);
+                        _ = InvokeMethodWithDelay(SelectedComponent, SelectedMethod, target.parameterValues, 2);
                     }
                     else
                     {
-                        InvokeMethod(selectedComponent, selectedMethod, target.parameterValues);
+                        InvokeMethod(SelectedComponent, SelectedMethod, target.parameterValues);
                     }
                 }
 
                 delay = EditorGUILayout.FloatField(delayLabel, delay, GUILayout.ExpandWidth(false));
             }
+        }
+
+        void HandleSelectionChanged()
+        {
+            selectedGameObject = Selection.activeGameObject;
+            Refresh();
         }
 
         void Refresh()
@@ -180,13 +179,13 @@ namespace Methodic
 
         void RefreshMethods()
         {
-            target.SetSelectedComponent(selectedComponent);
+            target.SetSelectedComponent(SelectedComponent);
             methodIndex = 0;
         }
 
         void RefreshParameters()
         {
-            target.SetSelectedMethod(selectedMethod);
+            target.SetSelectedMethod(SelectedMethod);
         }
 
         static void InvokeMethod(MonoBehaviour component, MethodInfo method, object[] parameterValues)
