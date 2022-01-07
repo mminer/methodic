@@ -38,6 +38,11 @@ Requires Unity 2019.4 or later.
 
 ## Version History
 
+1.3.0 - January 6, 2022
+- Add option to invoke method after delay
+- Move preferences to window's custom menu
+- Move Methodic menu to Window > General
+
 1.2.2 - July 15, 2019
 - Migrate from `PreferenceItem` to `SettingsProvider` to avoid deprecation
   warning
