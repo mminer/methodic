@@ -106,19 +106,28 @@ namespace Methodic
                 }
                 else
                 {
-                    componentIndex = EditorGUILayout.Popup( "Component", componentIndex, target.componentLabels);
-
-                    // Update selected component if a different one has been chosen.
-                    RunIfGUIChanged(() =>
+                    using (var check = new EditorGUI.ChangeCheckScope())
                     {
-                        RefreshMethods();
-                        RefreshParameters();
-                    });
+                        componentIndex = EditorGUILayout.Popup( "Component", componentIndex, target.componentLabels);
 
-                    methodIndex = EditorGUILayout.Popup("Method", methodIndex, target.methodLabels);
+                        // Update selected component if a different one has been chosen.
+                        if (check.changed)
+                        {
+                            RefreshMethods();
+                            RefreshParameters();
+                        }
+                    }
 
-                    // Update selected method if a different one has been chosen.
-                    RunIfGUIChanged(RefreshParameters);
+                    using (var check = new EditorGUI.ChangeCheckScope())
+                    {
+                        methodIndex = EditorGUILayout.Popup("Method", methodIndex, target.methodLabels);
+
+                        // Update selected method if a different one has been chosen.
+                        if (check.changed)
+                        {
+                            RefreshParameters();
+                        }
+                    }
 
                     // Display list of parameters.
                     if (target.parameters.Length > 0)
@@ -310,17 +319,6 @@ namespace Methodic
             }
 
             return newValue;
-        }
-
-        static void RunIfGUIChanged(Action action)
-        {
-            if (!GUI.changed)
-            {
-                return;
-            }
-
-            action();
-            GUI.changed = true;
         }
     }
 }
