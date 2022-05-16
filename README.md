@@ -38,6 +38,11 @@ Requires Unity 2020.3 or later.
 
 ## Version History
 
+1.3.1 - May 15, 2022
+- Fix lock option
+- Show lock button in window toolbar
+- Move delay field to settings popup
+
 1.3.0 - January 6, 2022
 - Add option to invoke method after delay
 - Move preferences to window's custom menu
