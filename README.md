@@ -33,7 +33,7 @@ parameter type is unrecognized; say, if it's a class of your own creation.
 
 ## Compatibility
 
-Requires Unity 2019.4 or later.
+Requires Unity 2020.3 or later.
 
 
 ## Version History
