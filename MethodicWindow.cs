@@ -23,12 +23,14 @@ namespace Methodic
 
         static readonly MethodicTarget target = new MethodicTarget();
 
+        static GUIStyle lockButtonStyle;
+
         MonoBehaviour SelectedComponent => target.components.Length > 0 ? target.components[componentIndex] : null;
         MethodInfo SelectedMethod => target.methods.Length > 0 ? target.methods[methodIndex] : null;
 
         int componentIndex;
         float delay;
-        bool lockToGameObject;
+        bool locked;
         int methodIndex;
         Vector2 scrollPosition;
         GameObject selectedGameObject;
@@ -41,15 +43,13 @@ namespace Methodic
 
         public void AddItemsToMenu(GenericMenu menu)
         {
-            menu.AddItem(lockLabel, lockToGameObject, () =>
+            menu.AddItem(lockLabel, locked, () =>
             {
-                lockToGameObject = !lockToGameObject;
+                locked = !locked;
 
-                if (!lockToGameObject)
+                if (!locked)
                 {
-                    RefreshComponents();
-                    RefreshMethods();
-                    RefreshParameters();
+                    HandleUnlock();
                 }
             });
 
@@ -156,10 +156,35 @@ namespace Methodic
             delay = EditorGUILayout.FloatField(delayLabel, delay, GUILayout.ExpandWidth(false));
         }
 
+        void ShowButton(Rect rect)
+        {
+            using var check = new EditorGUI.ChangeCheckScope();
+            lockButtonStyle ??= "IN LockButton";
+            locked = GUI.Toggle(rect, locked, GUIContent.none, lockButtonStyle);
+
+            if (check.changed && !locked)
+            {
+                HandleUnlock();
+            }
+        }
+
         void HandleSelectionChanged()
         {
+            if (locked)
+            {
+                return;
+            }
+
             selectedGameObject = Selection.activeGameObject;
             Refresh();
+        }
+
+        void HandleUnlock()
+        {
+            selectedGameObject = Selection.activeGameObject;
+            RefreshComponents();
+            RefreshMethods();
+            RefreshParameters();
         }
 
         void Refresh()
