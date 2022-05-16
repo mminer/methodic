@@ -100,6 +100,7 @@ namespace Methodic
             target.showStatic = EditorPrefs.GetBool(showStaticPrefsKey);
 
             Selection.selectionChanged += HandleSelectionChanged;
+            HandleSelectionChanged();
         }
 
         void OnDisable()
