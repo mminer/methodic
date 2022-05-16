@@ -11,6 +11,26 @@ namespace Methodic
 {
     class MethodicWindow : EditorWindow, IHasCustomMenu
     {
+        class SettingsPopup : PopupWindowContent
+        {
+            readonly MethodicWindow window;
+
+            public SettingsPopup(MethodicWindow window)
+            {
+                this.window = window;
+            }
+
+            public override void OnGUI(Rect rect)
+            {
+                window.delay = EditorGUILayout.FloatField(delayLabel, window.delay, GUILayout.ExpandWidth(false));
+            }
+
+            public override Vector2 GetWindowSize()
+            {
+                return new Vector2(210, 22);
+            }
+        }
+
         // EditorPrefs keys.
         const string showPrivatePrefsKey = "methodic_include_private";
         const string showStaticPrefsKey = "methodic_include_static";
@@ -24,6 +44,7 @@ namespace Methodic
         static readonly MethodicTarget target = new MethodicTarget();
 
         static GUIStyle lockButtonStyle;
+        static GUIContent settingsIcon;
 
         MonoBehaviour SelectedComponent => target.components.Length > 0 ? target.components[componentIndex] : null;
         MethodInfo SelectedMethod => target.methods.Length > 0 ? target.methods[methodIndex] : null;
@@ -34,6 +55,8 @@ namespace Methodic
         int methodIndex;
         Vector2 scrollPosition;
         GameObject selectedGameObject;
+        Rect settingsButtonRect;
+        SettingsPopup settingsPopup;
 
         [MenuItem("Window/General/Methodic")]
         static void OpenMethodic()
@@ -145,24 +168,38 @@ namespace Methodic
 
             // Invoke Button:
 
-            using (new EditorGUI.DisabledScope(selectedGameObject == null))
+            using (new EditorGUILayout.HorizontalScope())
             {
-                if (GUILayout.Button(invokeLabel))
+                using (new EditorGUI.DisabledScope(selectedGameObject == null))
                 {
-                    Undo.RecordObject(selectedGameObject, $"{SelectedComponent.name} Call");
+                    if (GUILayout.Button(invokeLabel))
+                    {
+                        Undo.RecordObject(selectedGameObject, $"{SelectedComponent.name} Call");
 
-                    if (delay > 0)
-                    {
-                        _ = InvokeMethodWithDelay(SelectedComponent, SelectedMethod, target.parameterValues, 2);
-                    }
-                    else
-                    {
-                        InvokeMethod(SelectedComponent, SelectedMethod, target.parameterValues);
+                        if (delay > 0)
+                        {
+                            _ = InvokeMethodWithDelay(SelectedComponent, SelectedMethod, target.parameterValues, 2);
+                        }
+                        else
+                        {
+                            InvokeMethod(SelectedComponent, SelectedMethod, target.parameterValues);
+                        }
                     }
                 }
-            }
 
-            delay = EditorGUILayout.FloatField(delayLabel, delay, GUILayout.ExpandWidth(false));
+                settingsIcon ??= EditorGUIUtility.TrIconContent("d_Settings");
+
+                if (GUILayout.Button(settingsIcon, GUILayout.Height(19), GUILayout.ExpandWidth(false)))
+                {
+                    settingsPopup ??= new SettingsPopup(this);
+                    PopupWindow.Show(settingsButtonRect, settingsPopup);
+                }
+
+                if (Event.current.type == EventType.Repaint)
+                {
+                    settingsButtonRect = GUILayoutUtility.GetLastRect();
+                }
+            }
         }
 
         void ShowButton(Rect rect)
